@@ -66,7 +66,9 @@ endfunction
 function! s:map_set_wallpaper(helper) abort
   let path = a:helper.sync.get_cursor_node()._path
   let cmd = 'feh --bg-scale "' . path . '"'
+  let cmd2 = 'echo "' . path . '" > ~/.my-cur-wp'
   call system(cmd)
+  call system(cmd2)
   return 
 endfunction
 
