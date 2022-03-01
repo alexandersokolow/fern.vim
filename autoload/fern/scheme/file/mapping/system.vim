@@ -12,6 +12,7 @@ function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
   nnoremap <buffer><silent> <Plug>(fern-action-wallpaper) :<C-u>call <SID>call('set_wallpaper')<CR>
 
   nnoremap <buffer><silent> <Plug>(fern-action-fzf:cursor) :<C-u>call <SID>call('fzf_cursor')<CR>
+  nnoremap <buffer><silent> <Plug>(fern-action-fzf:directory) :<C-u>call <SID>call('fzf_directory')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-fzf:root) :<C-u>call <SID>call('fzf_root')<CR>
 
   if !a:disable_default_mappings
@@ -73,11 +74,28 @@ function! s:map_set_wallpaper(helper) abort
 endfunction
 
 function! s:map_fzf_cursor(helper) abort
-  echo "halloooololololo"
   let path = a:helper.sync.get_cursor_node()._path
   let cmd = 'silent !fvvf ' . path
   exe cmd
   let test = system('cat ~/.cur/fvvf-out')
+  if test == ""
+    exe 'redraw!'
+    return
+  endif
+  try
+    exe 'redraw!'
+    exe 'edit ' . test
+    exe 'redraw!'
+  catch
+    return
+  endtry
+endfunction
+
+function! s:map_fzf_directory(helper) abort
+  let path = a:helper.sync.get_cursor_node()._path
+  let cmd = 'silent !fvdf ' . path
+  exe cmd
+  let test = system('cat ~/.cur/fvdf-out')
   if test == ""
     exe 'redraw!'
     return
