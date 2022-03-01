@@ -11,8 +11,8 @@ function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
 
   nnoremap <buffer><silent> <Plug>(fern-action-wallpaper) :<C-u>call <SID>call('set_wallpaper')<CR>
 
-  nnoremap <buffer><silent> <Plug>(fern-action-ctrlp:cursor) :<C-u>call <SID>call('ctrlp_cursor')<CR>
-  nnoremap <buffer><silent> <Plug>(fern-action-ctrlp:root) :<C-u>call <SID>call('ctrlp_root')<CR>
+  nnoremap <buffer><silent> <Plug>(fern-action-fzf:cursor) :<C-u>call <SID>call('fzf_cursor')<CR>
+  nnoremap <buffer><silent> <Plug>(fern-action-fzf:root) :<C-u>call <SID>call('fzf_root')<CR>
 
   if !a:disable_default_mappings
     nmap <buffer><nowait> x <Plug>(fern-action-open:system)
@@ -72,16 +72,39 @@ function! s:map_set_wallpaper(helper) abort
   return 
 endfunction
 
-function! s:map_ctrlp_cursor(helper) abort
+function! s:map_fzf_cursor(helper) abort
+  echo "halloooololololo"
   let path = a:helper.sync.get_cursor_node()._path
-  let cmd = 'CtrlP ' . path
-  execute cmd
-  return 
+  let cmd = 'silent !fvvf ' . path
+  exe cmd
+  let test = system('cat ~/.cur/fvvf-out')
+  if test == ""
+    exe 'redraw!'
+    return
+  endif
+  try
+    exe 'redraw!'
+    exe 'edit ' . test
+    exe 'redraw!'
+  catch
+    return
+  endtry
 endfunction
 
-function! s:map_ctrlp_root(helper) abort
+function! s:map_fzf_root(helper) abort
   let path = a:helper.sync.get_root_node()._path
-  let cmd = 'CtrlP ' . path
-  execute cmd
-  return 
+  let cmd = 'silent !fvvf ' . path
+  exe cmd
+  let test = system('cat ~/.cur/fvvf-out')
+  if test == ""
+    exe 'redraw!'
+    return
+  endif
+  try
+    exe 'redraw!'
+    exe 'edit ' . test
+    exe 'redraw!'
+  catch
+    return
+  endtry
 endfunction
