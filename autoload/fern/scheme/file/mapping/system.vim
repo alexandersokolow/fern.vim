@@ -9,6 +9,8 @@ function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
   nnoremap <buffer><silent> <Plug>(fern-action-open:sxiv:tile) :<C-u>call <SID>call('open_sxiv_tile')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-open:sxiv:root) :<C-u>call <SID>call('open_sxiv_root')<CR>
 
+  nnoremap <buffer><silent> <Plug>(fern-action-open:mpv) :<C-u>call <SID>call('open_mpv')<CR>
+
   nnoremap <buffer><silent> <Plug>(fern-action-wallpaper) :<C-u>call <SID>call('set_wallpaper')<CR>
 
   nnoremap <buffer><silent> <Plug>(fern-action-fzf:cursor) :<C-u>call <SID>call('fzf_cursor')<CR>
@@ -47,21 +49,28 @@ function! s:map_open_sxiv(helper) abort
   let path = a:helper.sync.get_cursor_node()._path
   let cmd = 'nohup sxiv -b "' . path . '" >/dev/null 2>&1 &'
   call system(cmd)
-  return 
+  return
 endfunction
 
 function! s:map_open_sxiv_tile(helper) abort
   let path = a:helper.sync.get_cursor_node()._path
   let cmd = 'nohup sxiv -t -b "' . path . '" >/dev/null 2>&1 &'
   call system(cmd)
-  return 
+  return
 endfunction
 
 function! s:map_open_sxiv_root(helper) abort
   let path = a:helper.sync.get_root_node()._path
   let cmd = 'nohup sxiv -t -b "' . path . '" >/dev/null 2>&1 &'
   call system(cmd)
-  return 
+  return
+endfunction
+
+function! s:map_open_mpv(helper) abort
+  let path = a:helper.sync.get_cursor_node()._path
+  let cmd = 'nohup mpv -b "' . path . '" --loop=inf >/dev/null 2>&1 &'
+  call system(cmd)
+  return
 endfunction
 
 function! s:map_set_wallpaper(helper) abort
