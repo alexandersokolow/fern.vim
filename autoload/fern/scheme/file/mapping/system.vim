@@ -10,6 +10,7 @@ function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
   nnoremap <buffer><silent> <Plug>(fern-action-open:sxiv:root) :<C-u>call <SID>call('open_sxiv_root')<CR>
 
   nnoremap <buffer><silent> <Plug>(fern-action-open:mpv) :<C-u>call <SID>call('open_mpv')<CR>
+  nnoremap <buffer><silent> <Plug>(fern-action-open:mpv:loop) :<C-u>call <SID>call('open_mpv_loop')<CR>
 
   nnoremap <buffer><silent> <Plug>(fern-action-wallpaper) :<C-u>call <SID>call('set_wallpaper')<CR>
 
@@ -67,6 +68,13 @@ function! s:map_open_sxiv_root(helper) abort
 endfunction
 
 function! s:map_open_mpv(helper) abort
+  let path = a:helper.sync.get_cursor_node()._path
+  let cmd = 'nohup mpv "' . path . '" >/dev/null 2>&1 &'
+  call system(cmd)
+  return
+endfunction
+
+function! s:map_open_mpv_loop(helper) abort
   let path = a:helper.sync.get_cursor_node()._path
   let cmd = 'nohup mpv "' . path . '" --loop=inf >/dev/null 2>&1 &'
   call system(cmd)
