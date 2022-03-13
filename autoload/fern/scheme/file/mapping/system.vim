@@ -69,14 +69,14 @@ endfunction
 
 function! s:map_open_mpv(helper) abort
   let path = a:helper.sync.get_cursor_node()._path
-  let cmd = 'nohup mpv "' . path . '" >/dev/null 2>&1 &'
+  let cmd = 'nohup mpv --profile=pseudo-gui "' . path . '" >/dev/null 2>&1 &'
   call system(cmd)
   return
 endfunction
 
 function! s:map_open_mpv_loop(helper) abort
   let path = a:helper.sync.get_cursor_node()._path
-  let cmd = 'nohup mpv "' . path . '" --loop=inf >/dev/null 2>&1 &'
+  let cmd = 'nohup mpv --profile=pseudo-gui "' . path . '" --loop=inf >/dev/null 2>&1 &'
   call system(cmd)
   return
 endfunction
