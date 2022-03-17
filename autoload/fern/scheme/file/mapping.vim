@@ -11,6 +11,7 @@ function! fern#scheme#file#mapping#init(disable_default_mappings) abort
   nnoremap <buffer><silent> <Plug>(fern-action-copy)      :<C-u>call <SID>call('copy')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-move)      :<C-u>call <SID>call('move')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-trash)     :<C-u>call <SID>call('trash')<CR>
+  nnoremap <buffer><silent> <Plug>(fern-action-compress)     :<C-u>call <SID>call('compress')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-remove)    :<C-u>call <SID>call('remove')<CR>
 
   if !a:disable_default_mappings
@@ -19,6 +20,7 @@ function! fern#scheme#file#mapping#init(disable_default_mappings) abort
     nmap <buffer><nowait> c <Plug>(fern-action-copy)
     nmap <buffer><nowait> r <Plug>(fern-action-move)
     nmap <buffer><nowait> D <Plug>(fern-action-trash)
+    nmap <buffer><nowait> xc <Plug>(fern-action-compress)
   endif
 endfunction
 
@@ -170,6 +172,40 @@ function! s:map_trash(helper) abort
         \.then({ -> a:helper.async.reload_node(root.__key) })
         \.then({ -> a:helper.async.redraw() })
         \.then({ -> a:helper.sync.echo(printf('%d items are trashed', len(ps))) })
+endfunction
+
+function! s:map_compress(helper) abort
+  let cwd = getcwd()
+  let cfd = a:helper.sync.get_root_node()._path
+  let d1cmd = "cd ". cfd
+  exe d1cmd
+  let nodes = a:helper.sync.get_selected_nodes()
+  let paths = map(copy(nodes), { _, v -> v._path })
+  let prompt = printf('The following %d files will be compressed', len(paths))
+  for path in paths[:5]
+    let prompt .= "\n" . path
+  endfor
+  if len(paths) > 5
+    let prompt .= "\n..."
+  endif
+  let prompt .= "\nAre you sure to continue (Y[es]/no): "
+  if !s:Prompt.confirm(prompt)
+    return s:Promise.reject('Cancelled')
+  endif
+  exe "norm U"
+  let token = a:helper.fern.source.token
+  let args = join(paths, " ")
+  let cmd = 'silent !compf "' . args . '" && fg'
+  exe cmd
+  exe 'redraw!'
+  let d2cmd = "cd ". cwd
+  exe d2cmd
+  let root = a:helper.sync.get_root_node()
+  return s:Promise.resolve()
+        \.then({ -> a:helper.async.collapse_modified_nodes(nodes) })
+        \.then({ -> a:helper.async.reload_node(root.__key) })
+        \.then({ -> a:helper.async.redraw() })
+        \.then({ -> a:helper.sync.echo(printf('%d items are compressed', len(ps))) })
 endfunction
 
 function! s:map_remove(helper) abort
