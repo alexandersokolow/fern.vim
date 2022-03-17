@@ -21,9 +21,9 @@ function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
   nnoremap <buffer><silent> <Plug>(fern-action-fzf:directory) :<C-u>call <SID>call('fzf_directory')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-fzf:root) :<C-u>call <SID>call('fzf_root')<CR>
 
-  if !a:disable_default_mappings
-    nmap <buffer><nowait> x <Plug>(fern-action-open:system)
-  endif
+  " if !a:disable_default_mappings
+  "   nmap <buffer><nowait> x <Plug>(fern-action-open:system)
+  " endif
 endfunction
 
 function! s:call(name, ...) abort
