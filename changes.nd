@@ -1,5 +1,5 @@
 + removed trailing / for dirs and changed syntax highlighting
-+ fern/scheme/file/mapping/system.vim (detached opening + sxiv opening + mpv opening + set wallpaper)
++ fern/scheme/file/mapping/system.vim (detached opening + sxiv / mpv opening + extraction + set wallpaper)
 + fern/scheme/file/mapping/yank.vim (yanking to systems clipboard)
 + fern/scheme/file/mapping/drawer.vim (commented z mapping)
 + fern/scheme/file/mapping/filter.vim (commented fi fe mappings)

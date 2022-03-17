@@ -12,6 +12,9 @@ function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
   nnoremap <buffer><silent> <Plug>(fern-action-open:mpv) :<C-u>call <SID>call('open_mpv')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-open:mpv:loop) :<C-u>call <SID>call('open_mpv_loop')<CR>
 
+  nnoremap <buffer><silent> <Plug>(fern-action-ext:here) :<C-u>call <SID>call('extract_here')<CR>
+  nnoremap <buffer><silent> <Plug>(fern-action-ext:directory) :<C-u>call <SID>call('extract_directory')<CR>
+
   nnoremap <buffer><silent> <Plug>(fern-action-wallpaper) :<C-u>call <SID>call('set_wallpaper')<CR>
 
   nnoremap <buffer><silent> <Plug>(fern-action-fzf:cursor) :<C-u>call <SID>call('fzf_cursor')<CR>
@@ -79,6 +82,32 @@ function! s:map_open_mpv_loop(helper) abort
   let cmd = 'nohup mpv --profile=pseudo-gui "' . path . '" --loop=inf >/dev/null 2>&1 &'
   call system(cmd)
   return
+endfunction
+
+function! s:map_extract_here(helper) abort
+  let cwd = getcwd()
+  let cfd = a:helper.sync.get_root_node()._path
+  let d1cmd = "cd ". cfd
+  exe d1cmd
+  let path = a:helper.sync.get_cursor_node()._path
+  let cmd = 'silent !exth "' . path . '" && fg'
+  exe cmd
+  exe 'redraw!'
+  let d2cmd = "cd ". cwd
+  exe d2cmd
+  let root = a:helper.sync.get_root_node()
+  return a:helper.async.reload_node(root.__key)
+        \.then({ -> a:helper.async.redraw() })
+endfunction
+
+function! s:map_extract_directory(helper) abort
+  let path = a:helper.sync.get_cursor_node()._path
+  let cmd = 'silent !extd "' . path . '" && fg'
+  exe cmd
+  exe 'redraw!'
+  let root = a:helper.sync.get_root_node()
+  return a:helper.async.reload_node(root.__key)
+        \.then({ -> a:helper.async.redraw() })
 endfunction
 
 function! s:map_set_wallpaper(helper) abort
