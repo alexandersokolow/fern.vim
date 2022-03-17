@@ -5,3 +5,4 @@
 + fern/scheme/file/mapping/filter.vim (removed fi fe mappings)
 + fern/scheme/file/mapping.vim (changed mapping m to r)
 + fern/scheme/dict/mapping.vim (changed mapping m to r)
++ fern/mapping/mark.vim (removed <c-j> <c-k> mappings)
