@@ -1,7 +1,7 @@
 + removed trailing / for dirs and changed syntax highlighting
 + fern/scheme/file/mapping/system.vim (detached / sxiv / mpv opening + extraction + set wallpaper + removed x binding)
 + fern/scheme/file/mapping/yank.vim (yanking to systems clipboard)
-+ fern/scheme/file/mapping/drawer.vim (commented z mapping)
-+ fern/scheme/file/mapping/filter.vim (commented fi fe mappings)
++ fern/scheme/file/mapping/drawer.vim (removed z mapping)
++ fern/scheme/file/mapping/filter.vim (removed fi fe mappings)
 + fern/scheme/file/mapping.vim (changed mapping m to r)
 + fern/scheme/dict/mapping.vim (changed mapping m to r)
