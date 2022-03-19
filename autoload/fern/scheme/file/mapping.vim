@@ -19,7 +19,7 @@ function! fern#scheme#file#mapping#init(disable_default_mappings) abort
     nmap <buffer><nowait> K <Plug>(fern-action-new-dir)
     nmap <buffer><nowait> c <Plug>(fern-action-copy)
     nmap <buffer><nowait> r <Plug>(fern-action-move)
-    nmap <buffer><nowait> D <Plug>(fern-action-trash)
+    " nmap <buffer><nowait> D <Plug>(fern-action-trash)
   endif
 endfunction
 
@@ -181,7 +181,7 @@ function! s:map_compress(helper) abort
   let nodes = a:helper.sync.get_selected_nodes()
   let paths = map(copy(nodes), { _, v -> v._path })
   let args = join(paths, " ")
-  let cmd = 'FloatermNew --title=\ Choose\ Algorithm\  --width=0.25 --height=0.18 compf ' . args
+  let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Choose\ Algorithm\  --width=0.25 --height=0.18 compf ' . args
   exe cmd
   let d2cmd = "cd ". cwd
   exe d2cmd

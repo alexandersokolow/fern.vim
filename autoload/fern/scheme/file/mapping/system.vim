@@ -19,6 +19,8 @@ function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
   nnoremap <buffer><silent> <Plug>(fern-action-cb:move) :<C-u>call <SID>call('move_from_clipboard')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-cb:select) :<C-u>call <SID>call('selection_to_clipboard')<CR>
 
+  nnoremap <buffer><silent> <Plug>(fern-action-ftrash) :<C-u>call <SID>call('trash_nodes')<CR>
+
   nnoremap <buffer><silent> <Plug>(fern-action-wallpaper) :<C-u>call <SID>call('set_wallpaper')<CR>
 
   nnoremap <buffer><silent> <Plug>(fern-action-fzf:cursor) :<C-u>call <SID>call('fzf_cursor')<CR>
@@ -116,14 +118,14 @@ endfunction
 function! s:map_copy_from_clipboard(helper) abort
   let cursor_path = a:helper.sync.get_cursor_node()._path
   let cursor_dir = fnamemodify(cursor_path, ':p:h')
-  let cmd = 'FloatermNew --title=\ Copy\ Files?\  cbc ' . cursor_dir
+  let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Copy\ Files?\  cbc ' . cursor_dir
   exe cmd
 endfunction
 
 function! s:map_move_from_clipboard(helper) abort
   let cursor_path = a:helper.sync.get_cursor_node()._path
   let cursor_dir = fnamemodify(cursor_path, ':p:h')
-  let cmd = 'FloatermNew --title=\ Move\ Files?\  cbm ' . cursor_dir
+  let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Move\ Files?\  cbm ' . cursor_dir
   exe cmd
 endfunction
 
@@ -138,6 +140,15 @@ function! s:map_selection_to_clipboard(helper) abort
   return s:Promise.resolve()
         \.then({ -> a:helper.async.update_marks([]) })
         \.then({ -> a:helper.async.remark() })
+endfunction
+
+function! s:map_trash_nodes(helper) abort
+  let nodes = a:helper.sync.get_selected_nodes()
+  let paths = map(copy(nodes), { _, v -> v._path })
+  let length = len(paths)
+  let args = join(paths, " ")
+  let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Trash\ Files?\  ftrash ' . args
+  exe cmd
 endfunction
 
 function! s:map_set_wallpaper(helper) abort

@@ -12,9 +12,9 @@ function! fern#scheme#dict#mapping#init(disable_default_mappings) abort
   if !a:disable_default_mappings
     nmap <buffer><nowait> N <Plug>(fern-action-new-leaf)
     nmap <buffer><nowait> K <Plug>(fern-action-new-branch)
-    " nmap <buffer><nowait> c <Plug>(fern-action-copy)
+    nmap <buffer><nowait> c <Plug>(fern-action-copy)
     nmap <buffer><nowait> r <Plug>(fern-action-move)
-    nmap <buffer><nowait> D <Plug>(fern-action-remove)
+    " nmap <buffer><nowait> D <Plug>(fern-action-remove)
     nmap <buffer><nowait> e <Plug>(fern-action-edit-leaf)
   endif
 endfunction
