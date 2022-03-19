@@ -17,6 +17,7 @@ function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
 
   nnoremap <buffer><silent> <Plug>(fern-action-cb:copy) :<C-u>call <SID>call('copy_from_clipboard')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-cb:move) :<C-u>call <SID>call('move_from_clipboard')<CR>
+  nnoremap <buffer><silent> <Plug>(fern-action-cb:select) :<C-u>call <SID>call('selection_to_clipboard')<CR>
 
   nnoremap <buffer><silent> <Plug>(fern-action-wallpaper) :<C-u>call <SID>call('set_wallpaper')<CR>
 
@@ -127,9 +128,16 @@ function! s:map_move_from_clipboard(helper) abort
 endfunction
 
 function! s:map_selection_to_clipboard(helper) abort
-  let cursor_path = a:helper.sync.get_cursor_node()._path
-  let cursor_dir = fnamemodify(cursor_path, ':p:h')
-  " exe cmd
+  let nodes = a:helper.sync.get_selected_nodes()
+  let paths = map(copy(nodes), { _, v -> v._path })
+  let length = len(paths)
+  let args = join(paths, " ")
+  let cmd = "echo '" . args . "' | xclip -sel clip"
+  call system(cmd)
+  echo "successfully copied " . length . " nodes to clipboard"
+  return s:Promise.resolve()
+        \.then({ -> a:helper.async.update_marks([]) })
+        \.then({ -> a:helper.async.remark() })
 endfunction
 
 function! s:map_set_wallpaper(helper) abort
