@@ -180,7 +180,6 @@ function! s:map_compress(helper) abort
   exe d1cmd
   let nodes = a:helper.sync.get_selected_nodes()
   let paths = map(copy(nodes), { _, v -> v._path })
-  let token = a:helper.fern.source.token
   let args = join(paths, " ")
   let cmd = 'FloatermNew --title=\ Choose\ Algorithm\  --width=0.25 --height=0.18 compf ' . args
   exe cmd
