@@ -24,7 +24,7 @@ function! fern#mapping#node#init(disable_default_mappings) abort
     nmap <buffer><nowait> <C-h> <Plug>(fern-action-leave)
     nmap <buffer><nowait> l <Plug>(fern-action-expand)
     nmap <buffer><nowait> h <Plug>(fern-action-collapse)
-    nmap <buffer><nowait> i <Plug>(fern-action-reveal)
+    " nmap <buffer><nowait> i <Plug>(fern-action-reveal)
     nmap <buffer><nowait> <Return> <C-m>
     nmap <buffer><nowait> <Backspace> <C-h>
   endif

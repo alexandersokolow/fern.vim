@@ -6,3 +6,4 @@
 + fern/scheme/file/mapping.vim (changed mapping m to r)
 + fern/scheme/dict/mapping.vim (changed mapping m to r, removed c mapping)
 + fern/mapping/mark.vim (removed <c-j> <c-k> mappings)
++ fern/mapping/node.vim (removed i mapping)
