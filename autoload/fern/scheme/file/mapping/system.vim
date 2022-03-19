@@ -114,8 +114,9 @@ function! s:map_extract_directory(helper) abort
 endfunction
 
 function! s:map_copy_from_clipboard(helper) abort
-  let path = a:helper.sync.get_root_node()._path
-  let cmd = 'silent !cbc "' . path . '" && fg'
+  let cursor_path = a:helper.sync.get_cursor_node()._path
+  let cursor_dir = fnamemodify(cursor_path, ':p:h')
+  let cmd = 'silent !cbc "' . cursor_dir . '" && fg'
   exe cmd
   exe 'redraw!'
   let root = a:helper.sync.get_root_node()
@@ -124,8 +125,9 @@ function! s:map_copy_from_clipboard(helper) abort
 endfunction
 
 function! s:map_move_from_clipboard(helper) abort
-  let path = a:helper.sync.get_root_node()._path
-  let cmd = 'silent !cbm "' . path . '" && fg'
+  let cursor_path = a:helper.sync.get_cursor_node()._path
+  let cursor_dir = fnamemodify(cursor_path, ':p:h')
+  let cmd = 'silent !cbm "' . cursor_dir . '" && fg'
   exe cmd
   exe 'redraw!'
   let root = a:helper.sync.get_root_node()
