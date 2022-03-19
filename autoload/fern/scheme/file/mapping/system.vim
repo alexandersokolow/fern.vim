@@ -15,6 +15,9 @@ function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
   nnoremap <buffer><silent> <Plug>(fern-action-ext:here) :<C-u>call <SID>call('extract_here')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-ext:directory) :<C-u>call <SID>call('extract_directory')<CR>
 
+  nnoremap <buffer><silent> <Plug>(fern-action-cb:copy) :<C-u>call <SID>call('copy_from_clipboard')<CR>
+  nnoremap <buffer><silent> <Plug>(fern-action-cb:move) :<C-u>call <SID>call('move_from_clipboard')<CR>
+
   nnoremap <buffer><silent> <Plug>(fern-action-wallpaper) :<C-u>call <SID>call('set_wallpaper')<CR>
 
   nnoremap <buffer><silent> <Plug>(fern-action-fzf:cursor) :<C-u>call <SID>call('fzf_cursor')<CR>
@@ -103,6 +106,26 @@ endfunction
 function! s:map_extract_directory(helper) abort
   let path = a:helper.sync.get_cursor_node()._path
   let cmd = 'silent !extd "' . path . '" && fg'
+  exe cmd
+  exe 'redraw!'
+  let root = a:helper.sync.get_root_node()
+  return a:helper.async.reload_node(root.__key)
+        \.then({ -> a:helper.async.redraw() })
+endfunction
+
+function! s:map_copy_from_clipboard(helper) abort
+  let path = a:helper.sync.get_root_node()._path
+  let cmd = 'silent !cbc "' . path . '" && fg'
+  exe cmd
+  exe 'redraw!'
+  let root = a:helper.sync.get_root_node()
+  return a:helper.async.reload_node(root.__key)
+        \.then({ -> a:helper.async.redraw() })
+endfunction
+
+function! s:map_move_from_clipboard(helper) abort
+  let path = a:helper.sync.get_root_node()._path
+  let cmd = 'silent !cbm "' . path . '" && fg'
   exe cmd
   exe 'redraw!'
   let root = a:helper.sync.get_root_node()
