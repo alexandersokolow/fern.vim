@@ -115,23 +115,21 @@ endfunction
 function! s:map_copy_from_clipboard(helper) abort
   let cursor_path = a:helper.sync.get_cursor_node()._path
   let cursor_dir = fnamemodify(cursor_path, ':p:h')
-  let cmd = 'silent !cbc "' . cursor_dir . '" && fg'
+  let cmd = 'FloatermNew --title=\ Copy\ Files?\  cbc ' . cursor_dir
   exe cmd
-  exe 'redraw!'
-  let root = a:helper.sync.get_root_node()
-  return a:helper.async.reload_node(root.__key)
-        \.then({ -> a:helper.async.redraw() })
 endfunction
 
 function! s:map_move_from_clipboard(helper) abort
   let cursor_path = a:helper.sync.get_cursor_node()._path
   let cursor_dir = fnamemodify(cursor_path, ':p:h')
-  let cmd = 'silent !cbm "' . cursor_dir . '" && fg'
+  let cmd = 'FloatermNew --title=\ Move\ Files?\  cbm ' . cursor_dir
   exe cmd
-  exe 'redraw!'
-  let root = a:helper.sync.get_root_node()
-  return a:helper.async.reload_node(root.__key)
-        \.then({ -> a:helper.async.redraw() })
+endfunction
+
+function! s:map_selection_to_clipboard(helper) abort
+  let cursor_path = a:helper.sync.get_cursor_node()._path
+  let cursor_dir = fnamemodify(cursor_path, ':p:h')
+  " exe cmd
 endfunction
 
 function! s:map_set_wallpaper(helper) abort
