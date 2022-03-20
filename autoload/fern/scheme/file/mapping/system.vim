@@ -17,6 +17,7 @@ function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
 
   nnoremap <buffer><silent> <Plug>(fern-action-cb:copy) :<C-u>call <SID>call('copy_from_clipboard')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-cb:move) :<C-u>call <SID>call('move_from_clipboard')<CR>
+  nnoremap <buffer><silent> <Plug>(fern-action-cb:link) :<C-u>call <SID>call('link_from_clipboard')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-cb:select) :<C-u>call <SID>call('selection_to_clipboard')<CR>
 
   nnoremap <buffer><silent> <Plug>(fern-action-ftrash) :<C-u>call <SID>call('trash_nodes')<CR>
@@ -126,6 +127,13 @@ function! s:map_move_from_clipboard(helper) abort
   let cursor_path = a:helper.sync.get_cursor_node()._path
   let cursor_dir = fnamemodify(cursor_path, ':p:h')
   let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Move\ Files?\  cbm ' . cursor_dir
+  exe cmd
+endfunction
+
+function! s:map_link_from_clipboard(helper) abort
+  let cursor_path = a:helper.sync.get_cursor_node()._path
+  let cursor_dir = fnamemodify(cursor_path, ':p:h')
+  let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Move\ Files?\  cbl ' . cursor_dir
   exe cmd
 endfunction
 
