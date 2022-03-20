@@ -181,7 +181,7 @@ function! s:map_compress(helper) abort
   let nodes = a:helper.sync.get_selected_nodes()
   let paths = map(copy(nodes), { _, v -> v._path })
   let args = join(paths, " ")
-  let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Choose\ Algorithm\  --width=0.6 --height=0.6 compf ' . args
+  let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Choose\ Algorithm\  --width=0.4 --height=0.4 compf ' . args
   exe cmd
   let d2cmd = "cd ". cwd
   exe d2cmd
