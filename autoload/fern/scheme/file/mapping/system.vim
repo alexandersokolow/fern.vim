@@ -117,24 +117,39 @@ function! s:map_extract_directory(helper) abort
 endfunction
 
 function! s:map_copy_from_clipboard(helper) abort
-  let cursor_path = a:helper.sync.get_cursor_node()._path
-  let cursor_dir = fnamemodify(cursor_path, ':p:h')
-  let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Copy\ Files?\  cbc ' . cursor_dir
-  exe cmd
+  let clipboard_has_nodes = system('cb-check')
+  if clipboard_has_nodes
+    let cursor_path = a:helper.sync.get_cursor_node()._path
+    let cursor_dir = fnamemodify(cursor_path, ':p:h')
+    let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Copy\ Files?\  cbc ' . cursor_dir
+    exe cmd
+  else
+    echo "clipboard content is not a valid list of nodes"
+  endif
 endfunction
 
 function! s:map_move_from_clipboard(helper) abort
-  let cursor_path = a:helper.sync.get_cursor_node()._path
-  let cursor_dir = fnamemodify(cursor_path, ':p:h')
-  let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Move\ Files?\  cbm ' . cursor_dir
-  exe cmd
+  let clipboard_has_nodes = system('cb-check')
+  if clipboard_has_nodes
+    let cursor_path = a:helper.sync.get_cursor_node()._path
+    let cursor_dir = fnamemodify(cursor_path, ':p:h')
+    let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Move\ Files?\  cbm ' . cursor_dir
+    exe cmd
+  else
+    echo "clipboard content is not a valid list of nodes"
+  endif
 endfunction
 
 function! s:map_link_from_clipboard(helper) abort
-  let cursor_path = a:helper.sync.get_cursor_node()._path
-  let cursor_dir = fnamemodify(cursor_path, ':p:h')
-  let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Move\ Files?\  cbl ' . cursor_dir
-  exe cmd
+  let clipboard_has_nodes = system('cb-check')
+  if clipboard_has_nodes
+    let cursor_path = a:helper.sync.get_cursor_node()._path
+    let cursor_dir = fnamemodify(cursor_path, ':p:h')
+    let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Move\ Files?\  cbl ' . cursor_dir
+    exe cmd
+  else
+    echo "clipboard content is not a valid list of nodes"
+  endif
 endfunction
 
 function! s:map_selection_to_clipboard(helper) abort
