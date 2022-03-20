@@ -162,7 +162,8 @@ endfunction
 
 function! s:map_fzf_root(helper) abort
   let path = a:helper.sync.get_root_node()._path
-  call fzf#run({'source': '~/dot/scripts/fzf/fvvh ' . path, 'sink': 'e', 'window': {'width': 0.8, 'height': 0.8}})
+  let sink_cmd = 'FzfCursorAfter ' . path
+  call fzf#run({'source': '~/dot/scripts/fzf/fvvh ' . path, 'sink': sink_cmd, 'window': {'width': 0.8, 'height': 0.8}})
 endfunction
 
 function! s:map_fzf_cursor(helper) abort
