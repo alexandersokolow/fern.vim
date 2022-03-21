@@ -24,6 +24,9 @@ function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
 
   nnoremap <buffer><silent> <Plug>(fern-action-wallpaper) :<C-u>call <SID>call('set_wallpaper')<CR>
 
+  nnoremap <buffer><silent> <Plug>(fern-action-bash:cursor) :<C-u>call <SID>call('bash_cursor')<CR>
+  nnoremap <buffer><silent> <Plug>(fern-action-bash:root) :<C-u>call <SID>call('bash_root')<CR>
+
   nnoremap <buffer><silent> <Plug>(fern-action-fzf:cursor) :<C-u>call <SID>call('fzf_cursor')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-fzf:root) :<C-u>call <SID>call('fzf_root')<CR>
 
@@ -181,6 +184,19 @@ function! s:map_set_wallpaper(helper) abort
   call system(cmd)
   call system(cmd2)
   return 
+endfunction
+
+function! s:map_bash_root(helper) abort
+  let path = a:helper.sync.get_root_node()._path
+  let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=Bash --cwd=' . path
+  exe cmd
+endfunction
+
+function! s:map_bash_cursor(helper) abort
+  let cursor_path = a:helper.sync.get_cursor_node()._path
+  let cursor_dir = fnamemodify(cursor_path, ':p:h')
+  let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=Bash --cwd=' . cursor_dir
+  exe cmd
 endfunction
 
 function! s:map_fzf_root(helper) abort
