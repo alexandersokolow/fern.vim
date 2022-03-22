@@ -69,25 +69,73 @@ function! s:provider_get_children(node, ...) abort
         \.finally({ -> Profile() })
 endfunction
 
-function! s:node(path) abort
-  if empty(getftype(a:path))
-    throw printf('no such file or directory exists: %s', a:path)
+function! s:get_the_size(stuff) abort
+  if len(a:stuff) > 1
+    return a:stuff[1]
+  else
+    return 0
   endif
-  let status = isdirectory(a:path)
-  let name = fern#internal#path#basename(fern#internal#filepath#to_slash(a:path))
+endfunction
+
+function! s:get_the_filetype(stuff) abort
+  if len(a:stuff) > 2
+    return a:stuff[2]
+  else
+    return ""
+  endif
+endfunction
+
+function! s:get_the_linkto(stuff) abort
+  if len(a:stuff) > 3
+    return a:stuff[3]
+  else
+    return ""
+  endif
+endfunction
+
+function! s:node(path) abort
+  let stuff = split(a:path)
+  let mypath = stuff[0]
+  let mysize = s:get_the_size(stuff)
+  let myfiletype = s:get_the_filetype(stuff)
+  let mylinkto = s:get_the_linkto(stuff)
+  let status = isdirectory(mypath)
+  let name = fern#internal#path#basename(fern#internal#filepath#to_slash(mypath))
   let bufname = status
         \ ? fern#fri#format(fern#fri#new({
         \     'scheme': 'fern',
-        \     'path': fern#fri#format(fern#fri#from#filepath(a:path)),
+        \     'path': fern#fri#format(fern#fri#from#filepath(mypath)),
         \   }))
-        \ : a:path
+        \ : mypath
   return {
         \ 'name': name,
         \ 'status': status,
         \ 'hidden': name[:0] ==# '.',
         \ 'bufname': bufname,
-        \ '_path': a:path,
+        \ '_path': mypath,
+        \ '_size': mysize,
+        \ '_filetype': myfiletype,
+        \ '_linkto': mylinkto,
         \}
+
+  " if empty(getftype(a:path))
+  "   throw printf('no such file or directory exists: %s', a:path)
+  " endif
+  " let status = isdirectory(a:path)
+  " let name = fern#internal#path#basename(fern#internal#filepath#to_slash(a:path))
+  " let bufname = status
+  "       \ ? fern#fri#format(fern#fri#new({
+  "       \     'scheme': 'fern',
+  "       \     'path': fern#fri#format(fern#fri#from#filepath(a:path)),
+  "       \   }))
+  "       \ : a:path
+  " return {
+  "       \ 'name': name,
+  "       \ 'status': status,
+  "       \ 'hidden': name[:0] ==# '.',
+  "       \ 'bufname': bufname,
+  "       \ '_path': a:path,
+  "       \}
 endfunction
 
 function! s:safe(fn) abort

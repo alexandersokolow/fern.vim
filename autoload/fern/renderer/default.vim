@@ -38,29 +38,35 @@ function! s:lnum(index) abort
 endfunction
 
 function! s:syntax() abort
-  syntax match FernLeaf   /^.*[^/].*$/ transparent contains=FernLeafSymbol
-  syntax match FernBranch /^[ ]*[] .*.*$/   transparent contains=FernBranchSymbol
-  syntax match FernRoot   /\%1l.*/       transparent contains=FernRootText
-  execute printf(
-        \ 'syntax match FernRootSymbol /%s/ contained nextgroup=FernRootText',
-        \ escape(g:fern#renderer#default#root_symbol, s:ESCAPE_PATTERN),
-        \)
-  execute printf(
-        \ 'syntax match FernLeafSymbol /^\%%(%s\)*%s/ contained nextgroup=FernLeafText',
-        \ escape(g:fern#renderer#default#leading, s:ESCAPE_PATTERN),
-        \ escape(g:fern#renderer#default#leaf_symbol, s:ESCAPE_PATTERN),
-        \)
-  execute printf(
-        \ 'syntax match FernBranchSymbol /^\%%(%s\)*\%%(%s\|%s\)/ contained nextgroup=FernBranchText',
-        \ escape(g:fern#renderer#default#leading, s:ESCAPE_PATTERN),
-        \ escape(g:fern#renderer#default#collapsed_symbol, s:ESCAPE_PATTERN),
-        \ escape(g:fern#renderer#default#expanded_symbol, s:ESCAPE_PATTERN),
-        \)
-  syntax match FernRootText   /.*\ze.*$/ contained nextgroup=FernBadgeSep
-  syntax match FernLeafText   /.*\ze.*$/ contained nextgroup=FernBadgeSep
-  syntax match FernBranchText /.*\ze.*$/ contained nextgroup=FernBadgeSep
-  syntax match FernBadgeSep   //         contained conceal nextgroup=FernBadge
-  syntax match FernBadge      /.*/         contained
+  syntax match FernRoot /^.*$/
+  syntax match FernLink /^.*/
+  syntax match FernExecutable /^.*.*$/ contains=ExecutableChar
+  syntax match FernBranch /^[ ]*[].*$/ contains=FernBranchLink
+  syntax match FernBranchLink /.*$/
+
+  " syntax match FernLeaf   /^.*[^/].*$/ transparent contains=FernLeafSymbol
+  " syntax match FernBranch /^[ ]*[] .*.*$/   transparent contains=FernBranchSymbol
+  " syntax match FernRoot   /\%1l.*/       transparent contains=FernRootText
+  " execute printf(
+  "       \ 'syntax match FernRootSymbol /%s/ contained nextgroup=FernRootText',
+  "       \ escape(g:fern#renderer#default#root_symbol, s:ESCAPE_PATTERN),
+  "       \)
+  " execute printf(
+  "       \ 'syntax match FernLeafSymbol /^\%%(%s\)*%s/ contained nextgroup=FernLeafText',
+  "       \ escape(g:fern#renderer#default#leading, s:ESCAPE_PATTERN),
+  "       \ escape(g:fern#renderer#default#leaf_symbol, s:ESCAPE_PATTERN),
+  "       \)
+  " execute printf(
+  "       \ 'syntax match FernBranchSymbol /^\%%(%s\)*\%%(%s\|%s\)/ contained nextgroup=FernBranchText',
+  "       \ escape(g:fern#renderer#default#leading, s:ESCAPE_PATTERN),
+  "       \ escape(g:fern#renderer#default#collapsed_symbol, s:ESCAPE_PATTERN),
+  "       \ escape(g:fern#renderer#default#expanded_symbol, s:ESCAPE_PATTERN),
+  "       \)
+  " syntax match FernRootText   /.*\ze.*$/ contained nextgroup=FernBadgeSep
+  " syntax match FernLeafText   /.*\ze.*$/ contained nextgroup=FernBadgeSep
+  " syntax match FernBranchText /.*\ze.*$/ contained nextgroup=FernBadgeSep
+  " syntax match FernBadge      /.*/         contained
+  syntax match ExecutableChar   //         contained conceal
   setlocal concealcursor=nvic conceallevel=2
 endfunction
 
@@ -73,19 +79,51 @@ function! s:highlight() abort
   highlight default link FernBranchText   Directory
 endfunction
 
+function! s:get_node_suffix(node) abort
+  let filetype = a:node._filetype
+  let linkto = a:node._linkto
+  if filetype == "f"
+    return ""
+  endif
+  if filetype == "x"
+    return ""
+  endif
+  if filetype == 'l'
+    return "   " .linkto
+  endif
+  return ""
+endfunction
+
+function! s:get_node_prefix(node) abort
+  let filetype = a:node._filetype
+  let linkto = a:node._linkto
+  if filetype == "f"
+    return ""
+  endif
+  if filetype == "x"
+    " this has an invisible character in it for syntax highlighting!
+    return ""
+  endif
+  if filetype == 'l'
+    return ""
+  endif
+  return ""
+endfunction
+
 function! s:render_node(node, base, options) abort
   let level = len(a:node.__key) - a:base
   if level is# 0
-    return a:options.root_symbol . a:node.label . '' . a:node.badge
+    return a:options.root_symbol . a:node.label
   endif
   let leading = repeat(a:options.leading, level - 1)
   let symbol = a:node.status is# s:STATUS_NONE
-        \ ? a:options.leaf_symbol
+        \ ? s:get_node_prefix(a:node)
         \ : a:node.status is# s:STATUS_COLLAPSED
         \   ? a:options.collapsed_symbol
         \   : a:options.expanded_symbol
-  let suffix = a:node.status ? '' : ''
-  return leading . symbol . a:node.label . suffix . '' . a:node.badge
+  let suffix = s:get_node_suffix(a:node)
+  " return leading . symbol . a:node.label . suffix
+  return leading . symbol . a:node.label . suffix
 endfunction
 
 call s:Config.config(expand('<sfile>:p'), {
