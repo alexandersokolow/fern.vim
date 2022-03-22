@@ -39,10 +39,10 @@ endfunction
 
 function! s:syntax() abort
   syntax match FernRoot /^.*$/
-  syntax match FernLink /^.*/
+  syntax match FernLink /^.*/ contains=FernWallChar
   syntax match FernExecutable /^.*.*$/ contains=ExecutableChar
-  syntax match FernBranch /^[ ]*[].*$/ contains=FernBranchLink
-  syntax match FernBranchLink /.*$/
+  syntax match FernBranch /^.*[].*$/ contains=FernBranchLink,FernWallChar
+  syntax match FernBranchLink /.*$/ contains=FernWallChar
 
   " syntax match FernLeaf   /^.*[^/].*$/ transparent contains=FernLeafSymbol
   " syntax match FernBranch /^[ ]*[] .*.*$/   transparent contains=FernBranchSymbol
@@ -66,6 +66,8 @@ function! s:syntax() abort
   " syntax match FernLeafText   /.*\ze.*$/ contained nextgroup=FernBadgeSep
   " syntax match FernBranchText /.*\ze.*$/ contained nextgroup=FernBadgeSep
   " syntax match FernBadge      /.*/         contained
+  syntax match FernWallChar /│/ contained
+  syntax match FernWallCharAlone /│/
   syntax match ExecutableChar   //         contained conceal
   setlocal concealcursor=nvic conceallevel=2
 endfunction
@@ -96,18 +98,52 @@ endfunction
 
 function! s:get_node_prefix(node) abort
   let filetype = a:node._filetype
+  let size = a:node._size
   let linkto = a:node._linkto
   if filetype == "f"
     return ""
   endif
   if filetype == "x"
-    " this has an invisible character in it for syntax highlighting!
     return ""
   endif
   if filetype == 'l'
     return ""
   endif
   return ""
+endfunction
+
+function! s:get_node_size(node, leading) abort
+  if g:fern#hide_sizes
+    return ""
+  endif
+  let name = a:node.label
+  let filetype = a:node._filetype
+  let size = a:node._size
+  let linkto = a:node._linkto
+  let spaces_to_pad = 48 - len(name) - len(a:leading) - len(size)
+  if filetype == "d"
+    let spaces_to_pad2 = spaces_to_pad - 6
+    if spaces_to_pad2 > 1
+      return repeat(" ", spaces_to_pad2) . size . " In"
+    endif
+    return ""
+  endif
+  if filetype == "f"
+    if spaces_to_pad > 1
+      return repeat(" ", spaces_to_pad) . size
+    endif
+    return ""
+  endif
+  if filetype == "x"
+    if spaces_to_pad > 1
+      return repeat(" ", spaces_to_pad) . size
+    endif
+    return ""
+  endif
+  if filetype == 'l'
+    return ""
+  endif
+  return repeat(" ", spaces_to_pad) . size
 endfunction
 
 function! s:render_node(node, base, options) abort
@@ -123,7 +159,7 @@ function! s:render_node(node, base, options) abort
         \   : a:options.expanded_symbol
   let suffix = s:get_node_suffix(a:node)
   " return leading . symbol . a:node.label . suffix
-  return leading . symbol . a:node.label . suffix
+  return leading . symbol . a:node.label . suffix . s:get_node_size(a:node, leading)
 endfunction
 
 call s:Config.config(expand('<sfile>:p'), {

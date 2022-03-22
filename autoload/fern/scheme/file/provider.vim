@@ -71,9 +71,10 @@ endfunction
 
 function! s:get_the_size(stuff) abort
   if len(a:stuff) > 1
-    return a:stuff[1]
+    let size = a:stuff[1]
+    return size
   else
-    return 0
+    return ""
   endif
 endfunction
 

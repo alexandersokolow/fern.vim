@@ -12,6 +12,6 @@ miscellaneous
 + fern/mapping/node.vim (removed i mapping)
 
 extra info for nodes and filetype syntax highlighting (link, executable)
-+ fern/renderer/default (changed syntax fun, added suffix/prefix fun, changed render_node fun)
++ fern/renderer/default (changed syntax fun, added suffix/prefix/size fun, changed render_node fun)
 + fern/scheme/file/provider (added get_the_... funs, changed node fun
 + fern/scheme/file/util (changed find command to fnodes command)
