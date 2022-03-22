@@ -119,13 +119,29 @@ function! s:async_update_expanded_sizes(nodes)
   endfor
 endfunction
 
+function! s:remove_removed_expanded_nodes(nodes)
+  let remaining_nodes = []
+  for node in a:nodes
+    if node.status is# s:STATUS_EXPANDED
+      let exists = isdirectory(node._path)
+      if exists
+        call add(remaining_nodes, node)
+      endif
+    else
+      call add(remaining_nodes, node)
+    endif
+  endfor
+  return remaining_nodes
+endfunction
+
 function! s:async_update_nodes(nodes) abort dict
   call s:async_update_expanded_sizes(a:nodes)
+  let remaining_nodes = s:remove_removed_expanded_nodes(a:nodes)
   let l:Profile = fern#profile#start('fern#helper:helper.async.update_nodes')
   let helper = self.helper
   let fern = helper.fern
   return helper.sync.save_cursor()
-        \.then({ -> fern#internal#core#update_nodes(fern, a:nodes) })
+        \.then({ -> fern#internal#core#update_nodes(fern, remaining_nodes) })
         \.then({ -> helper.sync.restore_cursor() })
         \.finally({ -> Profile() })
 endfunction
