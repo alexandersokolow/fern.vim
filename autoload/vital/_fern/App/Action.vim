@@ -62,12 +62,12 @@ function! s:init() abort
           \ s:prefix,
           \)
   endif
-  if !hasmapto(printf('<Plug>(%s-action-repeat)', s:prefix), 'n')
-    execute printf(
-          \ 'nmap <buffer> . <Plug>(%s-action-repeat)',
-          \ s:prefix,
-          \)
-  endif
+  " if !hasmapto(printf('<Plug>(%s-action-repeat)', s:prefix), 'n')
+  "   execute printf(
+  "         \ 'nmap <buffer> . <Plug>(%s-action-repeat)',
+  "         \ s:prefix,
+  "         \)
+  " endif
   if !hasmapto(printf('<Plug>(%s-action-help)', s:prefix), 'n')
     execute printf(
           \ 'nmap <buffer> ? <Plug>(%s-action-help)',
