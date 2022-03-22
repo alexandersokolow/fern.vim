@@ -112,6 +112,20 @@ function! s:get_node_prefix(node) abort
   return ""
 endfunction
 
+function! s:get_formatted_size(size) abort
+  let last_char = a:size[len(a:size)-1]
+  if last_char == 'K'
+    return a:size[0:len(a:size)-2] . " " . last_char
+  endif
+  if last_char == 'M'
+    return a:size[0:len(a:size)-2] . " " . last_char
+  endif
+  if last_char == 'G'
+    return a:size[0:len(a:size)-2] . " " . last_char
+  endif
+  return a:size . " B"
+endfunction
+
 function! s:get_node_size(node, leading) abort
   if g:fern#hide_sizes
     return ""
@@ -119,6 +133,7 @@ function! s:get_node_size(node, leading) abort
   let name = a:node.label
   let filetype = a:node._filetype
   let size = a:node._size
+  let formatted_size = s:get_formatted_size(size)
   let linkto = a:node._linkto
   let spaces_to_pad = 48 - len(name) - len(a:leading) - len(size)
   if filetype == "d"
@@ -130,13 +145,21 @@ function! s:get_node_size(node, leading) abort
   endif
   if filetype == "f"
     if spaces_to_pad > 1
-      return repeat(" ", spaces_to_pad) . size
+      let last_formatted_char = formatted_size[len(formatted_size)-1]
+      if last_formatted_char == 'B'
+        return repeat(" ", spaces_to_pad - 2) . formatted_size
+      endif
+      return repeat(" ", spaces_to_pad - 1) . formatted_size
     endif
     return ""
   endif
   if filetype == "x"
     if spaces_to_pad > 1
-      return repeat(" ", spaces_to_pad) . size
+      let last_formatted_char = formatted_size[len(formatted_size)-1]
+      if last_formatted_char == 'B'
+        return repeat(" ", spaces_to_pad - 2) . formatted_size
+      endif
+      return repeat(" ", spaces_to_pad - 1) . formatted_size
     endif
     return ""
   endif
