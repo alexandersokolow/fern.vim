@@ -157,7 +157,7 @@ endfunction
 
 function! s:map_selection_to_clipboard(helper) abort
   let nodes = a:helper.sync.get_selected_nodes()
-  let paths = map(copy(nodes), { _, v -> v._path })
+  let paths = map(copy(nodes), { _, v -> substitute(v._path, " ", "", "g") })
   let length = len(paths)
   let args = join(paths, " ")
   let cmd = "echo '" . args . "' | xclip -sel clip"
@@ -170,10 +170,11 @@ endfunction
 
 function! s:map_trash_nodes(helper) abort
   let nodes = a:helper.sync.get_selected_nodes()
-  let paths = map(copy(nodes), { _, v -> v._path })
-  let length = len(paths)
+  let paths = map(copy(nodes), { _, v -> substitute(v._path, " ", "", "g") })
   let args = join(paths, " ")
-  let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Trash\ Files?\  ftrash ' . args
+  let cmd = "echo '" . args . "' | xclip -sel clip"
+  call system(cmd)
+  let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Trash\ Files?\  ftrash'
   exe cmd
 endfunction
 
