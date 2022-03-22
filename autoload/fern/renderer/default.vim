@@ -137,9 +137,9 @@ function! s:get_node_size(node, leading) abort
   let linkto = a:node._linkto
   let spaces_to_pad = 48 - len(name) - len(a:leading) - len(size)
   if filetype == "d"
-    let spaces_to_pad2 = spaces_to_pad - 6
+    let spaces_to_pad2 = spaces_to_pad - 3
     if spaces_to_pad2 > 1
-      return repeat(" ", spaces_to_pad2) . size . " In"
+      return repeat(" ", spaces_to_pad2) . size
     endif
     return ""
   endif
