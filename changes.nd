@@ -15,3 +15,4 @@ extra info for nodes and filetype syntax highlighting (link, executable)
 + fern/renderer/default (changed syntax fun, added suffix/prefix/size fun, changed render_node fun)
 + fern/scheme/file/provider (added get_the_... funs, changed node fun
 + fern/scheme/file/util (changed find command to fnodes command)
++ fern/helper/async.vim (added update_expanded_sizes fun and put it into update_nodes)

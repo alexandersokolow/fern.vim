@@ -1,6 +1,8 @@
 let s:Promise = vital#fern#import('Async.Promise')
 let s:AsyncLambda = vital#fern#import('Async.Lambda')
 
+let s:STATUS_EXPANDED = g:fern#STATUS_EXPANDED
+
 function! fern#helper#async#new(helper) abort
   let async = extend({ 'helper': a:helper }, s:async)
   return async
@@ -108,7 +110,17 @@ function! s:async_set_exclude(pattern) abort dict
 endfunction
 let s:async.set_exclude = funcref('s:async_set_exclude')
 
+function! s:async_update_expanded_sizes(nodes) 
+  for node in a:nodes
+    if node.status is# s:STATUS_EXPANDED
+      let new_size = system('fcount ' . node._path)
+      let node._size = "" . new_size
+    endif
+  endfor
+endfunction
+
 function! s:async_update_nodes(nodes) abort dict
+  call s:async_update_expanded_sizes(a:nodes)
   let l:Profile = fern#profile#start('fern#helper:helper.async.update_nodes')
   let helper = self.helper
   let fern = helper.fern
