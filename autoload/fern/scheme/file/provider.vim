@@ -95,7 +95,7 @@ function! s:get_the_linkto(stuff) abort
 endfunction
 
 function! s:node(path) abort
-  let stuff = split(a:path)
+  let stuff = split(a:path, '')
   let mypath = stuff[0]
   let mysize = s:get_the_size(stuff)
   let myfiletype = s:get_the_filetype(stuff)
