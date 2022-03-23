@@ -59,23 +59,37 @@ function! s:map_open_system_detached(helper) abort
   return 
 endfunction
 
+function! s:give_quotes(word) 
+  return "'" . a:word . "'"
+endfunction
+
 function! s:map_open_sxiv(helper) abort
-  let path = a:helper.sync.get_cursor_node()._path
-  let cmd = 'nohup sxiv -b "' . path . '" >/dev/null 2>&1 &'
+  let nodes = a:helper.sync.get_selected_nodes()
+  let paths = map(copy(nodes), { _, v -> s:give_quotes(v._path)})
+  let args = join(paths, " ")
+  let cmd = 'nohup nsxiv -b ' . args . ' >/dev/null 2>&1 &'
+  echo cmd
   call system(cmd)
-  return
+  return s:Promise.resolve()
+        \.then({ -> a:helper.async.update_marks([]) })
+        \.then({ -> a:helper.async.remark() })
 endfunction
 
 function! s:map_open_sxiv_tile(helper) abort
-  let path = a:helper.sync.get_cursor_node()._path
-  let cmd = 'nohup sxiv -t -b "' . path . '" >/dev/null 2>&1 &'
+  let nodes = a:helper.sync.get_selected_nodes()
+  let paths = map(copy(nodes), { _, v -> s:give_quotes(v._path)})
+  let args = join(paths, " ")
+  let cmd = 'nohup nsxiv -t -b ' . args . ' >/dev/null 2>&1 &'
+  echo cmd
   call system(cmd)
-  return
+  return s:Promise.resolve()
+        \.then({ -> a:helper.async.update_marks([]) })
+        \.then({ -> a:helper.async.remark() })
 endfunction
 
 function! s:map_open_sxiv_root(helper) abort
   let path = a:helper.sync.get_root_node()._path
-  let cmd = 'nohup sxiv -t -b "' . path . '" >/dev/null 2>&1 &'
+  let cmd = 'nohup nsxiv -t -b "' . path . '" >/dev/null 2>&1 &'
   call system(cmd)
   return
 endfunction
