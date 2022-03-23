@@ -113,7 +113,7 @@ let s:async.set_exclude = funcref('s:async_set_exclude')
 function! s:async_update_expanded_sizes(nodes) 
   for node in a:nodes
     if node.status is# s:STATUS_EXPANDED
-      let new_size = system('fcount ' . node._path)
+      let new_size = system("fcount '" . node._path . "'")
       let node._size = "" . new_size
     endif
   endfor
