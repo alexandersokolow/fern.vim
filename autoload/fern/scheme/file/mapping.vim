@@ -179,9 +179,10 @@ function! s:map_compress(helper) abort
   let d1cmd = "cd ". cfd
   exe d1cmd
   let nodes = a:helper.sync.get_selected_nodes()
-  let paths = map(copy(nodes), { _, v -> "'" . v._path . "'"})
-  let args = join(paths, " ")
-  let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Choose\ Algorithm\  --width=0.4 --height=0.4 compf ' . args
+  let paths = map(copy(nodes), { _, v -> '"' . v._path . '"'})
+  let paths2 = map(copy(paths), { _, v -> substitute(v, cwd . "/", "", "g")})
+  let args = join(paths2, " ")
+  let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Choose\ Algorithm\  --width=0.4 --height=0.4 comp ' . args
   exe cmd
   let d2cmd = "cd ". cwd
   exe d2cmd
