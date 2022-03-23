@@ -30,6 +30,8 @@ function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
 
   nnoremap <buffer><silent> <Plug>(fern-action-fzf:cursor) :<C-u>call <SID>call('fzf_cursor')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-fzf:root) :<C-u>call <SID>call('fzf_root')<CR>
+  nnoremap <buffer><silent> <Plug>(fern-action-fzf-dir:cursor) :<C-u>call <SID>call('fzf_dir_cursor')<CR>
+  nnoremap <buffer><silent> <Plug>(fern-action-fzf-dir:root) :<C-u>call <SID>call('fzf_dir_root')<CR>
 
   " if !a:disable_default_mappings
   "   nmap <buffer><nowait> x <Plug>(fern-action-open:system)
@@ -255,6 +257,18 @@ function! s:map_fzf_cursor(helper) abort
   let path = a:helper.sync.get_cursor_node()._path
   let sink_cmd = 'FzfCursorAfter ' . path
   call fzf#run({'source': '~/dot/scripts/fzf/fzf-vim-invim-here ' . path, 'sink': sink_cmd, 'window': {'width': 0.8, 'height': 0.8}})
+endfunction
+
+function! s:map_fzf_dir_root(helper) abort
+  let path = a:helper.sync.get_root_node()._path
+  let sink_cmd = 'FzfCursorAfter ' . path
+  call fzf#run({'source': '~/dot/scripts/fzf/fzf-vim-invim-here-dir ' . path, 'sink': sink_cmd, 'window': {'width': 0.8, 'height': 0.8}})
+endfunction
+
+function! s:map_fzf_dir_cursor(helper) abort
+  let path = a:helper.sync.get_cursor_node()._path
+  let sink_cmd = 'FzfCursorAfter ' . path
+  call fzf#run({'source': '~/dot/scripts/fzf/fzf-vim-invim-here-dir ' . path, 'sink': sink_cmd, 'window': {'width': 0.8, 'height': 0.8}})
 endfunction
 
 function! s:fzf_cursor_after(cursor, selection)
