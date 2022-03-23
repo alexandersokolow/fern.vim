@@ -194,19 +194,33 @@ function! s:map_trash_nodes(helper) abort
 endfunction
 
 function! s:map_toggle_executable(helper) abort
-  let path = a:helper.sync.get_cursor_node()._path
-  let cmd = "ftogglex '" . path . "'"
+  let nodes = a:helper.sync.get_selected_nodes()
+  let length = len(nodes)
+  let paths = map(copy(nodes), { _, v -> substitute(v._path, " ", "", "g") })
+  let args = join(paths, " ")
+  let cmd = "ftogglex " . args
   let out = system(cmd)
   let root = a:helper.sync.get_root_node()
-  if out == 0
-    echo "executability can't be toggled for this node"
-  elseif out == 1
-    echo "executability turned off"
+  if length == 1
+    if out == 0
+      echo "executability can't be toggled for this node"
+    elseif out == 1
+      echo "executability turned off"
+      return a:helper.async.reload_node(root.__key)
+            \.then({ -> a:helper.async.redraw() })
+    elseif out == 2
+      echo "executability turned on"
+      return a:helper.async.reload_node(root.__key)
+            \.then({ -> a:helper.async.redraw() })
+    endif
+  else
+    let out_s = split(out)
+    let count_on = out_s[0]
+    let count_off = out_s[1]
+    echo "executability toggled on for " . count_on . " nodes, off for " . count_off . " nodes."
     return a:helper.async.reload_node(root.__key)
-          \.then({ -> a:helper.async.redraw() })
-  elseif out == 2
-    echo "executability turned on"
-    return a:helper.async.reload_node(root.__key)
+          \.then({ -> a:helper.async.update_marks([]) })
+          \.then({ -> a:helper.async.remark() })
           \.then({ -> a:helper.async.redraw() })
   endif
 endfunction
