@@ -185,11 +185,9 @@ endfunction
 
 function! s:map_trash_nodes(helper) abort
   let nodes = a:helper.sync.get_selected_nodes()
-  let paths = map(copy(nodes), { _, v -> substitute(v._path, " ", "", "g") })
+  let paths = map(copy(nodes), { _, v -> "'" . v._path . "'"})
   let args = join(paths, " ")
-  let cmd = "echo '" . args . "' | xclip -sel clip"
-  call system(cmd)
-  let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Trash\ Files?\  ftrash'
+  let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Trash\ Files?\  ftrash ' . args
   exe cmd
 endfunction
 
