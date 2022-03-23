@@ -21,6 +21,7 @@ function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
   nnoremap <buffer><silent> <Plug>(fern-action-cb:select) :<C-u>call <SID>call('selection_to_clipboard')<CR>
 
   nnoremap <buffer><silent> <Plug>(fern-action-ftrash) :<C-u>call <SID>call('trash_nodes')<CR>
+  nnoremap <buffer><silent> <Plug>(fern-action-ftogglex) :<C-u>call <SID>call('toggle_executable')<CR>
 
   nnoremap <buffer><silent> <Plug>(fern-action-wallpaper) :<C-u>call <SID>call('set_wallpaper')<CR>
 
@@ -176,6 +177,24 @@ function! s:map_trash_nodes(helper) abort
   call system(cmd)
   let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=\ Trash\ Files?\  ftrash'
   exe cmd
+endfunction
+
+function! s:map_toggle_executable(helper) abort
+  let path = a:helper.sync.get_cursor_node()._path
+  let cmd = "ftogglex '" . path . "'"
+  let out = system(cmd)
+  let root = a:helper.sync.get_root_node()
+  if out == 0
+    echo "executability can't be toggled for this node"
+  elseif out == 1
+    echo "executability turned off"
+    return a:helper.async.reload_node(root.__key)
+          \.then({ -> a:helper.async.redraw() })
+  elseif out == 2
+    echo "executability turned on"
+    return a:helper.async.reload_node(root.__key)
+          \.then({ -> a:helper.async.redraw() })
+  endif
 endfunction
 
 function! s:map_set_wallpaper(helper) abort
