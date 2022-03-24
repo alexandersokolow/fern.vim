@@ -172,6 +172,11 @@ function! s:get_node_string(node, leading, suffix, symbol) abort
       let fileparts = split(name, "\\V.")
       if len(fileparts) > 1
         let ending = fileparts[len(fileparts)-1]
+        if len(ending) > 8
+          let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - 2
+          let name_cut = s:cut_string(name, 0, len_to_cut) . "~ "
+          return a:leading . a:symbol . name_cut . a:suffix . formatted_size
+        endif
         let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - strchars(ending) - 3
         let name_cut = s:cut_string(name, 0, len_to_cut) . "~." . ending . " "
         return a:leading . a:symbol . name_cut . a:suffix . formatted_size
@@ -194,6 +199,11 @@ function! s:get_node_string(node, leading, suffix, symbol) abort
       let fileparts = split(name, "\\V.")
       if len(fileparts) > 1
         let ending = fileparts[len(fileparts)-1]
+        if len(ending) > 8
+          let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - 2
+          let name_cut = s:cut_string(name, 0, len_to_cut) . "~ "
+          return a:leading . a:symbol . name_cut . a:suffix . formatted_size
+        endif
         let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - strchars(ending) - 4
         let name_cut = s:cut_string(name, 0, len_to_cut) . "~." . ending . " "
         return a:leading . a:symbol . name_cut . a:suffix . formatted_size
