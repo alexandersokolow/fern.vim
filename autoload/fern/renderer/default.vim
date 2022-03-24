@@ -135,7 +135,7 @@ function! s:get_node_size(node, leading) abort
   let size = a:node._size
   let formatted_size = s:get_formatted_size(size)
   let linkto = a:node._linkto
-  let spaces_to_pad = 48 - len(name) - len(a:leading) - len(size)
+  let spaces_to_pad = 52 - strchars(name) - strchars(a:leading) - strchars(size)
   if filetype == "d"
     let spaces_to_pad2 = spaces_to_pad - 3
     if spaces_to_pad2 > 1
