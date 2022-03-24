@@ -126,9 +126,22 @@ function! s:get_formatted_size(size) abort
   return a:size . " B"
 endfunction
 
-function! s:get_node_size(node, leading) abort
+function! s:cut_string(s, from, to)
+  try
+    let a = []
+    for c in a:s
+      call add(a,c)
+    endfor
+    let cut_a = a[a:from:a:to-1]
+    return join(cut_a, "")
+  catch /.*/
+    echo "Caught error: " . v:exception
+  endtry
+endfunction
+
+function! s:get_node_string(node, leading, suffix, symbol) abort
   if g:fern#hide_sizes
-    return ""
+    return a:leading . a:symbol . name_cut . a:suffix
   endif
   let name = a:node.label
   let filetype = a:node._filetype
@@ -138,33 +151,62 @@ function! s:get_node_size(node, leading) abort
   let spaces_to_pad = 52 - strchars(name) - strchars(a:leading) - strchars(size)
   if filetype == "d"
     let spaces_to_pad2 = spaces_to_pad - 3
-    if spaces_to_pad2 > 1
-      return repeat(" ", spaces_to_pad2) . size
+    if spaces_to_pad2 > 2
+      return a:leading . a:symbol . a:node.label . a:suffix . repeat(" ", spaces_to_pad2) . size
+    else
+      let len_to_cut = 52 - strchars(size) - strchars(a:leading) - 6
+      echo strchars(size)
+      let name_cut = s:cut_string(name, 0, len_to_cut) . "~ "
+      return a:leading . a:symbol . name_cut . a:suffix . size
     endif
-    return ""
+    return a:leading . a:symbol . name_cut . a:suffix
   endif
   if filetype == "f"
-    if spaces_to_pad > 1
-      let last_formatted_char = formatted_size[len(formatted_size)-1]
+    let last_formatted_char = formatted_size[len(formatted_size)-1]
+    if spaces_to_pad > 2
       if last_formatted_char == 'B'
-        return repeat(" ", spaces_to_pad - 2) . formatted_size
+        return a:leading . a:symbol . a:node.label . a:suffix . repeat(" ", spaces_to_pad - 2) . formatted_size
       endif
-      return repeat(" ", spaces_to_pad - 1) . formatted_size
+      return a:leading . a:symbol . a:node.label . a:suffix . repeat(" ", spaces_to_pad - 1) . formatted_size
+    else
+      let fileparts = split(name, "\\V.")
+      if len(fileparts) > 1
+        let ending = fileparts[len(fileparts)-1]
+        let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - strchars(ending) - 3
+        let name_cut = s:cut_string(name, 0, len_to_cut) . "~." . ending . " "
+        return a:leading . a:symbol . name_cut . a:suffix . formatted_size
+      else
+        let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - 2
+        let name_cut = s:cut_string(name, 0, len_to_cut) . "~ "
+        return a:leading . a:symbol . name_cut . a:suffix . formatted_size
+      endif
     endif
-    return ""
+    return a:leading . a:symbol . name_cut . a:suffix
   endif
   if filetype == "x"
-    if spaces_to_pad > 1
+    if spaces_to_pad > 2
       let last_formatted_char = formatted_size[len(formatted_size)-1]
       if last_formatted_char == 'B'
-        return repeat(" ", spaces_to_pad - 2) . formatted_size
+        return a:leading . a:symbol . a:node.label . a:suffix . repeat(" ", spaces_to_pad - 2) . formatted_size
       endif
-      return repeat(" ", spaces_to_pad - 1) . formatted_size
+      return a:leading . a:symbol . a:node.label . a:suffix . repeat(" ", spaces_to_pad - 1) . formatted_size
+    else
+      let fileparts = split(name, "\\V.")
+      if len(fileparts) > 1
+        let ending = fileparts[len(fileparts)-1]
+        let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - strchars(ending) - 4
+        let name_cut = s:cut_string(name, 0, len_to_cut) . "~." . ending . " "
+        return a:leading . a:symbol . name_cut . a:suffix . formatted_size
+      else
+        let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - 3
+        let name_cut = s:cut_string(name, 0, len_to_cut) . "~ "
+        return a:leading . a:symbol . name_cut . a:suffix . formatted_size
+      endif
     endif
-    return ""
+    return a:leading . a:symbol . name_cut . a:suffix
   endif
   if filetype == 'l'
-    return ""
+    return a:leading . a:symbol . a:node.label . a:suffix
   endif
   return repeat(" ", spaces_to_pad) . size
 endfunction
@@ -181,8 +223,8 @@ function! s:render_node(node, base, options) abort
         \   ? a:options.collapsed_symbol
         \   : a:options.expanded_symbol
   let suffix = s:get_node_suffix(a:node)
-  " return leading . symbol . a:node.label . suffix
-  return leading . symbol . a:node.label . suffix . s:get_node_size(a:node, leading)
+  let node_string = s:get_node_string(a:node, leading, suffix, symbol)
+  return node_string
 endfunction
 
 call s:Config.config(expand('<sfile>:p'), {
