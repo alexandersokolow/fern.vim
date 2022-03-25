@@ -25,6 +25,8 @@ function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
 
   nnoremap <buffer><silent> <Plug>(fern-action-wallpaper) :<C-u>call <SID>call('set_wallpaper')<CR>
 
+  nnoremap <buffer><silent> <Plug>(fern-action-echo-info) :<C-u>call <SID>call('echo_info')<CR>
+
   nnoremap <buffer><silent> <Plug>(fern-action-bash:cursor) :<C-u>call <SID>call('bash_cursor')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-bash:root) :<C-u>call <SID>call('bash_root')<CR>
 
@@ -245,6 +247,13 @@ function! s:map_bash_cursor(helper) abort
   let cursor_dir = fnamemodify(cursor_path, ':p:h')
   let cmd = 'FloatermNew --borderchars=─│─│╭╮╯╰ --title=Bash --cwd=' . cursor_dir
   exe cmd
+endfunction
+
+function! s:map_echo_info(helper) abort
+  let path = a:helper.sync.get_cursor_node()._path
+  let cmd = 'ls -l ' . path
+  let out = system(cmd)
+  echo out
 endfunction
 
 function! s:map_fzf_root(helper) abort
