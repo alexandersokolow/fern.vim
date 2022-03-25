@@ -27,6 +27,9 @@ function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
 
   nnoremap <buffer><silent> <Plug>(fern-action-echo-info) :<C-u>call <SID>call('echo_info')<CR>
 
+  nnoremap <buffer><silent> <Plug>(fern-action-collapse-all) :<C-u>call <SID>call('collapse_all')<CR>
+  nnoremap <buffer><silent> <Plug>(fern-action-expand-siblings-or-children) :<C-u>call <SID>call('expand_siblings_or_children')<CR>
+
   nnoremap <buffer><silent> <Plug>(fern-action-bash:cursor) :<C-u>call <SID>call('bash_cursor')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-bash:root) :<C-u>call <SID>call('bash_root')<CR>
 
@@ -254,6 +257,55 @@ function! s:map_echo_info(helper) abort
   let cmd = 'ls -lh ' . path
   let out = system(cmd)
   echo out
+endfunction
+
+function! s:map_collapse_all(helper) abort
+  let root = a:helper.sync.get_root_node()
+  let nodes = a:helper.fern.nodes
+  let promises = []
+  for node in nodes
+    if node.status == 2 && node._path != root._path
+      call add(promises, a:helper.async.collapse_node(node.__key))
+    endif
+  endfor
+  return s:Promise.all(promises)
+          \.then({ -> a:helper.async.reload_node(root.__key) })
+          \.then({ -> a:helper.async.redraw() })
+endfunction
+
+function! s:get_dir_for_comparison(path, status) abort
+  if a:status == 2
+    return a:path
+  else
+    return s:get_parent_dir(a:path, a:status)
+  endif
+endfunction
+
+function! s:get_parent_dir(path, status) abort
+  let path_split = split(a:path, "/")
+  let path_split_cut = path_split[0:(len(path_split)-2)]
+  return "/" . join(path_split_cut, "/")
+endfunction
+
+" if cursor node is file or collapsed directory, expand siblings, else expand children
+function! s:map_expand_siblings_or_children(helper) abort
+  let fern = a:helper.fern
+  let root = a:helper.sync.get_root_node()
+  let cursor = a:helper.sync.get_cursor_node()
+  let comparison_dir = s:get_dir_for_comparison(cursor._path, cursor.status)
+  let nodes = a:helper.fern.nodes
+  let promises = []
+  for node in nodes
+    if node.status == 1
+      let node_dir = s:get_parent_dir(node._path, cursor.status)
+      if node_dir == comparison_dir
+        call add(promises, fern#internal#node#expand(node, fern.nodes, fern.provider, fern.comparator, fern.source.token))
+      endif
+    endif
+  endfor
+  return s:Promise.all(promises)
+          \.then({ -> a:helper.async.reload_node(root.__key) })
+          \.then({ -> a:helper.async.redraw() })
 endfunction
 
 function! s:map_fzf_root(helper) abort
