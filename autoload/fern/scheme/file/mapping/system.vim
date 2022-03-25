@@ -205,11 +205,11 @@ function! s:map_toggle_executable(helper) abort
     if out == 0
       echo "executability can't be toggled for this node"
     elseif out == 1
-      echo "executability turned off"
+      echo "executability toggled off for " . nodes[0].label
       return a:helper.async.reload_node(root.__key)
             \.then({ -> a:helper.async.redraw() })
     elseif out == 2
-      echo "executability turned on"
+      echo "executability toggled on for " . nodes[0].label
       return a:helper.async.reload_node(root.__key)
             \.then({ -> a:helper.async.redraw() })
     endif
