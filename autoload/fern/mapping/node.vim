@@ -16,7 +16,7 @@ function! fern#mapping#node#init(disable_default_mappings) abort
   nnoremap <buffer><silent> <Plug>(fern-action-leave)         :<C-u>call <SID>call('leave')<CR>
 
   nmap <buffer> <Plug>(fern-action-reload) <Plug>(fern-action-reload:all)
-  nmap <buffer> <Plug>(fern-action-expand) <Plug>(fern-action-expand:in)
+  nmap <buffer> <Plug>(fern-action-expand) <Plug>(fern-action-expand:stay)
 
   if !a:disable_default_mappings
     nmap <buffer><nowait> <F5> <Plug>(fern-action-reload)
