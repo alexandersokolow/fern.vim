@@ -251,7 +251,7 @@ endfunction
 
 function! s:map_echo_info(helper) abort
   let path = a:helper.sync.get_cursor_node()._path
-  let cmd = 'ls -l ' . path
+  let cmd = 'ls -lh ' . path
   let out = system(cmd)
   echo out
 endfunction
