@@ -293,7 +293,7 @@ function! s:map_expand_siblings_or_children(helper) abort
   let root = a:helper.sync.get_root_node()
   let cursor = a:helper.sync.get_cursor_node()
   let comparison_dir = s:get_dir_for_comparison(cursor._path, cursor.status)
-  let nodes = a:helper.fern.nodes
+  let nodes = a:helper.fern.visible_nodes
   let promises = []
   for node in nodes
     if node.status == 1
