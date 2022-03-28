@@ -197,19 +197,26 @@ function! s:map_mark_by_regex(helper) abort
   let regex = input(printf('Marking Regex: '))
   echo "\r\r"
   echo ""
-  let new_marks = []
+  if len(regex) == 0
+    return
+  endif
+  let marks = copy(a:helper.fern.marks)
+  let l:count = 0
   for node in nodes
     if node.label =~ regex
-      call add(new_marks, node.__key)
+      if index(marks, node.__key) == -1
+        let l:count = l:count + 1
+        call add(marks, node.__key)
+      endif
     endif
   endfor
-  if len(new_marks) > 0
-    echo "Successfully marked " . len(new_marks) . " nodes"
+  if l:count > 0
+    echo "Successfully marked " . l:count . " nodes"
   else
     echo "No nodes match the given regex"
   endif
   return s:Promise.resolve()
-        \.then({ -> a:helper.async.update_marks(new_marks) })
+        \.then({ -> a:helper.async.update_marks(marks) })
         \.then({ -> a:helper.async.remark() })
 endfunction
 
