@@ -20,6 +20,8 @@ function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
   nnoremap <buffer><silent> <Plug>(fern-action-cb:link) :<C-u>call <SID>call('link_from_clipboard')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-cb:select) :<C-u>call <SID>call('selection_to_clipboard')<CR>
 
+  nnoremap <buffer><silent> <Plug>(fern-action-mark:regex) :<C-u>call <SID>call('mark_by_regex')<CR>
+
   nnoremap <buffer><silent> <Plug>(fern-action-ftrash) :<C-u>call <SID>call('trash_nodes')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-ftogglex) :<C-u>call <SID>call('toggle_executable')<CR>
 
@@ -187,6 +189,27 @@ function! s:map_selection_to_clipboard(helper) abort
   echo "successfully copied " . length . " nodes to clipboard"
   return s:Promise.resolve()
         \.then({ -> a:helper.async.update_marks([]) })
+        \.then({ -> a:helper.async.remark() })
+endfunction
+
+function! s:map_mark_by_regex(helper) abort
+  let nodes = a:helper.fern.visible_nodes
+  let regex = input(printf('Marking Regex: '))
+  echo "\r\r"
+  echo ""
+  let new_marks = []
+  for node in nodes
+    if node.label =~ regex
+      call add(new_marks, node.__key)
+    endif
+  endfor
+  if len(new_marks) > 0
+    echo "Successfully marked " . len(new_marks) . " nodes"
+  else
+    echo "No nodes match the given regex"
+  endif
+  return s:Promise.resolve()
+        \.then({ -> a:helper.async.update_marks(new_marks) })
         \.then({ -> a:helper.async.remark() })
 endfunction
 
