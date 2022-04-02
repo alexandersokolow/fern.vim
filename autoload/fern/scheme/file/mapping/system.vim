@@ -213,7 +213,7 @@ function! s:map_mark_by_regex(helper) abort
   if l:count > 0
     echo "Successfully marked " . l:count . " nodes"
   else
-    echo "No nodes match the given regex"
+    echo "No unmarked nodes match the given regex"
   endif
   return s:Promise.resolve()
         \.then({ -> a:helper.async.update_marks(marks) })
