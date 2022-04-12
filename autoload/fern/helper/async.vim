@@ -135,7 +135,7 @@ function! s:remove_removed_expanded_nodes(nodes)
 endfunction
 
 function! s:async_update_nodes(nodes) abort dict
-  call s:async_update_expanded_sizes(a:nodes)
+  " call s:async_update_expanded_sizes(a:nodes)
   let remaining_nodes = s:remove_removed_expanded_nodes(a:nodes)
   let l:Profile = fern#profile#start('fern#helper:helper.async.update_nodes')
   let helper = self.helper
@@ -146,6 +146,19 @@ function! s:async_update_nodes(nodes) abort dict
         \.finally({ -> Profile() })
 endfunction
 let s:async.update_nodes = funcref('s:async_update_nodes')
+
+function! s:async_update_nodes_plus(nodes) abort dict
+  call s:async_update_expanded_sizes(a:nodes)
+  let remaining_nodes = s:remove_removed_expanded_nodes(a:nodes)
+  let l:Profile = fern#profile#start('fern#helper:helper.async.update_nodes')
+  let helper = self.helper
+  let fern = helper.fern
+  return helper.sync.save_cursor()
+        \.then({ -> fern#internal#core#update_nodes(fern, remaining_nodes) })
+        \.then({ -> helper.sync.restore_cursor() })
+        \.finally({ -> Profile() })
+endfunction
+let s:async.update_nodes_plus = funcref('s:async_update_nodes_plus')
 
 function! s:async_update_marks(marks) abort dict
   let l:Profile = fern#profile#start('fern#helper:helper.async.update_marks')
@@ -229,7 +242,7 @@ function! s:async_reload_node(key) abort dict
         \   fern.source.token,
         \ )
         \})
-        \.then({ ns -> self.update_nodes(ns) })
+        \.then({ ns -> self.update_nodes_plus(ns) })
         \.finally({ -> Profile() })
 endfunction
 let s:async.reload_node = funcref('s:async_reload_node')
