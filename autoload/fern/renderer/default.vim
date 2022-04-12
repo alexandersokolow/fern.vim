@@ -200,15 +200,15 @@ function! s:get_node_string(node, leading, suffix, symbol) abort
       if len(fileparts) > 1
         let ending = fileparts[len(fileparts)-1]
         if len(ending) > 8
-          let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - 2
+          let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - 2 + 1
           let name_cut = s:cut_string(name, 0, len_to_cut) . "~ "
           return a:leading . a:symbol . name_cut . a:suffix . formatted_size
         endif
-        let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - strchars(ending) - 4
+        let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - strchars(ending) - 4 + 1
         let name_cut = s:cut_string(name, 0, len_to_cut) . "~." . ending . " "
         return a:leading . a:symbol . name_cut . a:suffix . formatted_size
       else
-        let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - 3
+        let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - 3 + 1
         let name_cut = s:cut_string(name, 0, len_to_cut) . "~ "
         return a:leading . a:symbol . name_cut . a:suffix . formatted_size
       endif
