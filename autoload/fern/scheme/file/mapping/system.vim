@@ -12,6 +12,8 @@ function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
   nnoremap <buffer><silent> <Plug>(fern-action-open:mpv) :<C-u>call <SID>call('open_mpv')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-open:mpv:loop) :<C-u>call <SID>call('open_mpv_loop')<CR>
 
+  nnoremap <buffer><silent> <Plug>(fern-action-open:gimp) :<C-u>call <SID>call('open_gimp')<CR>
+
   nnoremap <buffer><silent> <Plug>(fern-action-ext:here) :<C-u>call <SID>call('extract_here')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-ext:directory) :<C-u>call <SID>call('extract_directory')<CR>
 
@@ -113,6 +115,13 @@ endfunction
 function! s:map_open_mpv_loop(helper) abort
   let path = a:helper.sync.get_cursor_node()._path
   let cmd = 'nohup mpv --profile=pseudo-gui "' . path . '" --loop=inf >/dev/null 2>&1 &'
+  call system(cmd)
+  return
+endfunction
+
+function! s:map_open_gimp(helper) abort
+  let path = a:helper.sync.get_cursor_node()._path
+  let cmd = 'nohup gimp "' . path . '" >/dev/null 2>&1 &'
   call system(cmd)
   return
 endfunction

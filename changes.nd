@@ -1,6 +1,6 @@
 stuff
 + removed trailing / for dirs and changed syntax highlighting
-+ fern/scheme/file/mapping/system.vim (detached / sxiv / mpv opening + extraction + files-actions + fuzzy finder + set wallpaper + removed x binding + expand/collapse all + regex marking)
++ fern/scheme/file/mapping/system.vim (detached / sxiv / mpv / gimp opening + extraction + files-actions + fuzzy finder + set wallpaper + removed x binding + expand/collapse all + regex marking)
 + fern/scheme/file/mapping/yank.vim (yanking to systems clipboard)
 + fern/scheme/file/mapping.vim (compression)
 + fern/renderer/default (changed syntax fun, added suffix/prefix/size fun, changed render_node fun)
