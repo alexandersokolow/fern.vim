@@ -271,10 +271,15 @@ endfunction
 
 function! s:map_set_wallpaper(helper) abort
   let path = a:helper.sync.get_cursor_node()._path
-  let cmd = 'feh --bg-scale "' . path . '"'
+  let cmd1 = 'feh --bg-scale "' . path . '"'
   let cmd2 = 'echo "' . path . '" > ~/.cur/wallpaper'
-  call system(cmd)
-  call system(cmd2)
+  call system(cmd1)
+  let cmd1_success = v:shell_error
+  if !v:shell_error
+    call system(cmd2)
+  else
+    echo path . " can't be used as a wallpaper"
+  endif
   return 
 endfunction
 
