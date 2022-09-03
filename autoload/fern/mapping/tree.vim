@@ -7,7 +7,7 @@ function! fern#mapping#tree#init(disable_default_mappings) abort
 
   if !a:disable_default_mappings
     nmap <buffer><nowait> <C-c> <Plug>(fern-action-cancel)
-    nmap <buffer><nowait> <C-l> <Plug>(fern-action-redraw)
+    " nmap <buffer><nowait> <C-l> <Plug>(fern-action-redraw)
   endif
 endfunction
 

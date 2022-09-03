@@ -16,5 +16,6 @@ mappings
 + fern/scheme/file/mapping/clipboard.vim (removed M, C, P mappings)
 + fern/scheme/dict/mapping/clipboard.vim (removed M, C, P mappings)
 + fern/mapping/mark.vim (removed <c-j> <c-k> mappings)
-+ fern/mapping/node.vim (removed i mapping)
++ fern/mapping/node.vim (removed i mapping, removed <c-h> mapping, changed <Backspace> mapping)
++ fern/mapping/tree.vim (removed <c-l> mapping)
 + fern/mapping/open.vim (removed e and E mappings)
