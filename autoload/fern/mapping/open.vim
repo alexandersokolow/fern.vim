@@ -49,7 +49,7 @@ function! fern#mapping#open#init(disable_default_mappings) abort
     nmap <buffer><nowait> s <Plug>(fern-action-open:select)
     " nmap <buffer><nowait> e <Plug>(fern-action-open)
     " nmap <buffer><nowait> E <Plug>(fern-action-open:side)
-    nmap <buffer><nowait> t <Plug>(fern-action-open:tabedit)
+    " nmap <buffer><nowait> t <Plug>(fern-action-open:tabedit)
   endif
 
   " DEPRECATED:
