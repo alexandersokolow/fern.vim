@@ -5,6 +5,8 @@ let s:ESCAPE_PATTERN = '^$~.*[]\'
 let s:STATUS_NONE = g:fern#STATUS_NONE
 let s:STATUS_COLLAPSED = g:fern#STATUS_COLLAPSED
 
+let s:LINE_LENGTH = 50
+
 function! fern#renderer#default#new() abort
   return {
         \ 'render': funcref('s:render'),
@@ -113,15 +115,12 @@ function! s:get_node_prefix(node) abort
   return ""
 endfunction
 
-function! s:get_formatted_size(size) abort
+function! s:get_formatted_size(size, filetype) abort
+  if a:filetype == "d"
+    return a:size
+  endif
   let last_char = a:size[len(a:size)-1]
-  if last_char == 'K'
-    return a:size[0:len(a:size)-2] . " " . last_char
-  endif
-  if last_char == 'M'
-    return a:size[0:len(a:size)-2] . " " . last_char
-  endif
-  if last_char == 'G'
+  if last_char == 'K' || last_char == 'M' || last_char == 'G'
     return a:size[0:len(a:size)-2] . " " . last_char
   endif
   return a:size . " B"
@@ -140,86 +139,40 @@ function! s:cut_string(s, from, to)
   endtry
 endfunction
 
+function! s:get_spaces_to_pad(name, size, filetype) abort
+  let spaces_to_pad = s:LINE_LENGTH - strchars(a:name) - strchars(a:size)
+  if a:filetype == "x"
+    return spaces_to_pad + 1
+  endif
+  return spaces_to_pad
+endfunction
+
+function! s:get_ending(name, filetype) abort
+  let fileparts = split(a:name, "\\V.")
+  let hasEnding = (a:filetype == "f" || a:filetype == "x") && len(fileparts) > 1
+  if hasEnding
+    let ending = fileparts[len(fileparts)-1]
+    if len(ending) < 9
+      return ending
+    endif
+  endif
+  return ""
+endfunction
+
 function! s:get_node_string(node, leading, suffix, symbol) abort
-  if g:fern#hide_sizes
-    return a:leading . a:symbol . name_cut . a:suffix
-  endif
-  let name = a:node.label
-  let filetype = a:node._filetype
-  let size = a:node._size
-  let formatted_size = s:get_formatted_size(size)
-  let linkto = a:node._linkto
-  let spaces_to_pad = 52 - strchars(name) - strchars(a:leading) - strchars(size)
-  if filetype == "d"
-    let spaces_to_pad2 = spaces_to_pad - 3
-    if spaces_to_pad2 > 2
-      return a:leading . a:symbol . a:node.label . a:suffix . repeat(" ", spaces_to_pad2) . size
-    else
-      let len_to_cut = 52 - strchars(size) - strchars(a:leading) - 6
-      echo strchars(size)
-      let name_cut = s:cut_string(name, 0, len_to_cut) . "~ "
-      return a:leading . a:symbol . name_cut . a:suffix . size
+    let filetype = a:node._filetype
+    let name = a:leading . a:symbol . a:node.label . a:suffix
+    let formatted_size = s:get_formatted_size(a:node._size, filetype)
+    let spaces_to_pad = s:get_spaces_to_pad(name, formatted_size, filetype)
+    let cut_name = spaces_to_pad < 3
+    if cut_name
+      let ending = s:get_ending(name, filetype)
+      let appender = len(ending) == 0 ? "~ " : ("~." . ending . " ")
+      let len_to_cut = s:LINE_LENGTH - strchars(formatted_size) - strchars(appender) + (filetype == "x" ? 1 : 0)
+      let name_cut = s:cut_string(name, 0, len_to_cut)
+      return name_cut . appender . formatted_size
     endif
-    return a:leading . a:symbol . name_cut . a:suffix
-  endif
-  if filetype == "f"
-    let last_formatted_char = formatted_size[len(formatted_size)-1]
-    if spaces_to_pad > 2
-      if last_formatted_char == 'B'
-        return a:leading . a:symbol . a:node.label . a:suffix . repeat(" ", spaces_to_pad - 2) . formatted_size
-      endif
-      return a:leading . a:symbol . a:node.label . a:suffix . repeat(" ", spaces_to_pad - 1) . formatted_size
-    else
-      let fileparts = split(name, "\\V.")
-      if len(fileparts) > 1
-        let ending = fileparts[len(fileparts)-1]
-        if len(ending) > 8
-          let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - 2
-          let name_cut = s:cut_string(name, 0, len_to_cut) . "~ "
-          return a:leading . a:symbol . name_cut . a:suffix . formatted_size
-        endif
-        let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - strchars(ending) - 3
-        let name_cut = s:cut_string(name, 0, len_to_cut) . "~." . ending . " "
-        return a:leading . a:symbol . name_cut . a:suffix . formatted_size
-      else
-        let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - 2
-        let name_cut = s:cut_string(name, 0, len_to_cut) . "~ "
-        return a:leading . a:symbol . name_cut . a:suffix . formatted_size
-      endif
-    endif
-    return a:leading . a:symbol . name_cut . a:suffix
-  endif
-  if filetype == "x"
-    if spaces_to_pad > 2
-      let last_formatted_char = formatted_size[len(formatted_size)-1]
-      if last_formatted_char == 'B'
-        return a:leading . a:symbol . a:node.label . a:suffix . repeat(" ", spaces_to_pad - 2) . formatted_size
-      endif
-      return a:leading . a:symbol . a:node.label . a:suffix . repeat(" ", spaces_to_pad - 1) . formatted_size
-    else
-      let fileparts = split(name, "\\V.")
-      if len(fileparts) > 1
-        let ending = fileparts[len(fileparts)-1]
-        if len(ending) > 8
-          let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - 2 + 1
-          let name_cut = s:cut_string(name, 0, len_to_cut) . "~ "
-          return a:leading . a:symbol . name_cut . a:suffix . formatted_size
-        endif
-        let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - strchars(ending) - 4 + 1
-        let name_cut = s:cut_string(name, 0, len_to_cut) . "~." . ending . " "
-        return a:leading . a:symbol . name_cut . a:suffix . formatted_size
-      else
-        let len_to_cut = 52 - strchars(formatted_size) - strchars(a:leading) - 3 + 1
-        let name_cut = s:cut_string(name, 0, len_to_cut) . "~ "
-        return a:leading . a:symbol . name_cut . a:suffix . formatted_size
-      endif
-    endif
-    return a:leading . a:symbol . name_cut . a:suffix
-  endif
-  if filetype == 'l'
-    return a:leading . a:symbol . a:node.label . a:suffix
-  endif
-  return repeat(" ", spaces_to_pad) . size
+    return name . repeat(" ", spaces_to_pad) . formatted_size
 endfunction
 
 function! s:render_node(node, base, options) abort
