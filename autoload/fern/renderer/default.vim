@@ -39,9 +39,10 @@ endfunction
 
 function! s:syntax() abort
   syntax match FernRoot /^.*$/
-  syntax match FernLink /^.*/ contains=FernWallChar
   syntax match FernExecutable /^.*.*$/ contains=ExecutableChar
   syntax match FernBranch /^.*[].*$/ contains=FernBranchLink,FernWallChar
+  syntax match FernLink /^.*/ contains=FernWallChar
+  syntax match FernBranchWithLink /^.*[].*/ contains=FernBranchLink,FernWallChar
   syntax match FernBranchLink /.*$/ contains=FernWallChar
 
   " syntax match FernLeaf   /^.*[^/].*$/ transparent contains=FernLeafSymbol
