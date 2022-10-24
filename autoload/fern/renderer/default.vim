@@ -44,8 +44,8 @@ function! s:syntax() abort
   syntax match FernExecutable /^.*.*$/ contains=ExecutableChar
   syntax match FernBranch /^.*[].*$/ contains=FernBranchLink,FernWallChar
   syntax match FernLink /^.*/ contains=FernWallChar
-  syntax match FernBranchWithLink /^.*[].*/ contains=FernBranchLink,FernWallChar
-  syntax match FernBranchLink /.*$/ contains=FernWallChar
+  syntax match FernLinkToBranch /^.*[].* .*$/ contains=FernLinkToBranchPointedText,FernWallChar
+  syntax match FernLinkToBranchPointedText /  .* / contains=FernWallChar
 
   " syntax match FernLeaf   /^.*[^/].*$/ transparent contains=FernLeafSymbol
   " syntax match FernBranch /^[ ]*[] .*.*$/   transparent contains=FernBranchSymbol
@@ -93,7 +93,7 @@ function! s:get_node_suffix(node) abort
   if filetype == "x"
     return ""
   endif
-  if filetype == 'l'
+  if filetype == 'l' || filetype == 'dl'
     return "   " .linkto
   endif
   return ""
@@ -116,7 +116,7 @@ function! s:get_node_prefix(node) abort
 endfunction
 
 function! s:get_formatted_size(size, filetype) abort
-  if a:filetype == "d"
+  if a:filetype == "d" || a:filetype == "dl"
     return a:size
   endif
   let last_char = a:size[len(a:size)-1]
