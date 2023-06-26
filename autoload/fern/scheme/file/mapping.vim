@@ -15,7 +15,8 @@ function! fern#scheme#file#mapping#init(disable_default_mappings) abort
   nnoremap <buffer><silent> <Plug>(fern-action-remove)    :<C-u>call <SID>call('remove')<CR>
 
   if !a:disable_default_mappings
-    nmap <buffer><nowait> N <Plug>(fern-action-new-file)
+    " nmap <buffer><nowait> N <Plug>(fern-action-new-file)
+    nmap <buffer><nowait> F <Plug>(fern-action-new-file)
     nmap <buffer><nowait> K <Plug>(fern-action-new-dir)
     nmap <buffer><nowait> c <Plug>(fern-action-copy)
     nmap <buffer><nowait> r <Plug>(fern-action-move)

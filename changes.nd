@@ -9,10 +9,10 @@ stuff
 + fern/helper/async.vim (added update_nodes_plus, update_expanded_sizes, remove_removed_expanded_nodes funs and put them into update_nodes)
 
 mappings
-+ fern/scheme/file/mapping.vim (changed mapping m to r, removed D mapping)
++ fern/scheme/file/mapping.vim (changed mapping m to r, removed D mapping, changed mapping from N to F)
 + fern/scheme/file/mapping/drawer.vim (removed z mapping)
 + fern/scheme/file/mapping/filter.vim (removed fi fe mappings)
-+ fern/scheme/dict/mapping.vim (changed mapping m to r, removed D mapping)
++ fern/scheme/dict/mapping.vim (changed mapping m to r, removed D mapping, changed mapping from N to F)
 + fern/scheme/file/mapping/clipboard.vim (removed M, C, P mappings)
 + fern/scheme/dict/mapping/clipboard.vim (removed M, C, P mappings)
 + fern/mapping/mark.vim (removed <c-j> <c-k> mappings)
