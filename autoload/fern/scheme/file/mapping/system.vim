@@ -3,7 +3,7 @@ let s:Promise = vital#fern#import('Async.Promise')
 function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
 
   nnoremap <buffer><silent> <Plug>(fern-action-open:system) :<C-u>call <SID>call('open_system')<CR>
-  nnoremap <buffer><silent> <Plug>(fern-action-open:system:detached) :<C-u>call <SID>call('open_system_detached')<CR>
+  nnoremap <buffer><silent> <Plug>(fern-action-open:system:detached) :<C-u>call <SID>call('open_system_multi_detached')<CR>
 
   nnoremap <buffer><silent> <Plug>(fern-action-open:sxiv) :<C-u>call <SID>call('open_sxiv')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-open:sxiv:tile) :<C-u>call <SID>call('open_sxiv_tile')<CR>
@@ -62,12 +62,16 @@ function! s:map_open_system(helper) abort
         \.finally({ -> Done() })
 endfunction
 
-function! s:map_open_system_detached(helper) abort
-  let path = a:helper.sync.get_cursor_node()._path
-  let cmd = 'nohup xdg-open "' . path . '" >/dev/null 2>&1  &'
-  echo cmd
-  call system(cmd)
-  return 
+function! s:map_open_system_multi_detached(helper) abort
+  let nodes = a:helper.sync.get_selected_nodes()
+  let paths = map(copy(nodes), { _, v -> s:give_quotes(v._path)})
+  for path in paths
+    let cmd = 'nohup xdg-open ' . path . ' >/dev/null 2>&1  &'
+    call system(cmd)
+  endfor
+  return s:Promise.resolve()
+        \.then({ -> a:helper.async.update_marks([]) })
+        \.then({ -> a:helper.async.remark() })
 endfunction
 
 function! s:give_quotes(word) 
