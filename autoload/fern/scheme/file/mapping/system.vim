@@ -83,7 +83,6 @@ function! s:map_open_sxiv(helper) abort
   let paths = map(copy(nodes), { _, v -> s:give_quotes(v._path)})
   let args = join(paths, " ")
   let cmd = 'nohup nsxiv -b ' . args . ' >/dev/null 2>&1 &'
-  echo cmd
   call system(cmd)
   return s:Promise.resolve()
         \.then({ -> a:helper.async.update_marks([]) })
@@ -95,7 +94,6 @@ function! s:map_open_sxiv_tile(helper) abort
   let paths = map(copy(nodes), { _, v -> s:give_quotes(v._path)})
   let args = join(paths, " ")
   let cmd = 'nohup nsxiv -t -b ' . args . ' >/dev/null 2>&1 &'
-  echo cmd
   call system(cmd)
   return s:Promise.resolve()
         \.then({ -> a:helper.async.update_marks([]) })
