@@ -13,6 +13,7 @@ function! fern#scheme#file#mapping#system#init(disable_default_mappings) abort
   nnoremap <buffer><silent> <Plug>(fern-action-open:mpv:loop) :<C-u>call <SID>call('open_mpv_loop')<CR>
 
   nnoremap <buffer><silent> <Plug>(fern-action-open:gimp) :<C-u>call <SID>call('open_gimp')<CR>
+  nnoremap <buffer><silent> <Plug>(fern-action-open:pinta) :<C-u>call <SID>call('open_pinta')<CR>
 
   nnoremap <buffer><silent> <Plug>(fern-action-ext:here) :<C-u>call <SID>call('extract_here')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-ext:directory) :<C-u>call <SID>call('extract_directory')<CR>
@@ -121,10 +122,37 @@ function! s:map_open_mpv_loop(helper) abort
   return
 endfunction
 
+function! s:is_image_file(filename) abort
+    let l:image_extensions = ['jpeg', 'jpg', 'png', 'webp', 'gif', 'bmp']
+    let l:file_extension = tolower(fnamemodify(a:filename, ':e'))
+    if index(l:image_extensions, l:file_extension) != -1
+        return 1
+    else
+        return 0
+    endif
+endfunction
+
 function! s:map_open_gimp(helper) abort
   let path = a:helper.sync.get_cursor_node()._path
-  let cmd = 'nohup gimp "' . path . '" >/dev/null 2>&1 &'
-  call system(cmd)
+  let is_img = s:is_image_file(path)
+  if is_img
+    let cmd = 'nohup gimp "' . path . '" >/dev/null 2>&1 &'
+    call system(cmd)
+  else
+    echo "'" . path "' is not an image."
+  endif
+  return
+endfunction
+
+function! s:map_open_pinta(helper) abort
+  let path = a:helper.sync.get_cursor_node()._path
+  let is_img = s:is_image_file(path)
+  if is_img
+    let cmd = 'nohup pinta "' . path . '" >/dev/null 2>&1 &'
+    call system(cmd)
+  else
+    echo "'" . path "' is not an image."
+  endif
   return
 endfunction
 
