@@ -93,6 +93,13 @@ endfunction
 
 function! s:map_copy(helper) abort
   let nodes = a:helper.sync.get_selected_nodes()
+  if len(nodes) == 1
+    let root_path = a:helper.sync.get_root_node()._path
+    let cursor_path = a:helper.sync.get_cursor_node()._path
+    if root_path == cursor_path
+      return
+    endif
+  endif
   let token = a:helper.fern.source.token
   let ps = []
   for node in nodes
@@ -117,6 +124,13 @@ endfunction
 
 function! s:map_move(helper) abort
   let nodes = a:helper.sync.get_selected_nodes()
+  if len(nodes) == 1
+    let root_path = a:helper.sync.get_root_node()._path
+    let cursor_path = a:helper.sync.get_cursor_node()._path
+    if root_path == cursor_path
+      return
+    endif
+  endif
   let token = a:helper.fern.source.token
   let ps = []
   let bufutil_pairs = []
@@ -144,6 +158,13 @@ endfunction
 
 function! s:map_trash(helper) abort
   let nodes = a:helper.sync.get_selected_nodes()
+  if len(nodes) == 1
+    let root_path = a:helper.sync.get_root_node()._path
+    let cursor_path = a:helper.sync.get_cursor_node()._path
+    if root_path == cursor_path
+      return
+    endif
+  endif
   let paths = map(copy(nodes), { _, v -> v._path })
   let prompt = printf('The following %d files will be trashed', len(paths))
   for path in paths[:5]
@@ -180,6 +201,13 @@ function! s:map_compress(helper) abort
   let d1cmd = "cd ". cfd
   exe d1cmd
   let nodes = a:helper.sync.get_selected_nodes()
+  if len(nodes) == 1
+    let root_path = a:helper.sync.get_root_node()._path
+    let cursor_path = a:helper.sync.get_cursor_node()._path
+    if root_path == cursor_path
+      return
+    endif
+  endif
   let paths = map(copy(nodes), { _, v -> '"' . v._path . '"'})
   let paths2 = map(copy(paths), { _, v -> substitute(v, cfd . "/", "", "g")})
   let args = join(paths2, " ")
@@ -191,6 +219,13 @@ endfunction
 
 function! s:map_remove(helper) abort
   let nodes = a:helper.sync.get_selected_nodes()
+  if len(nodes) == 1
+    let root_path = a:helper.sync.get_root_node()._path
+    let cursor_path = a:helper.sync.get_cursor_node()._path
+    if root_path == cursor_path
+      return
+    endif
+  endif
   let paths = map(copy(nodes), { _, v -> v._path })
   let prompt = printf('The following %d files will be removed', len(paths))
   for path in paths[:5]

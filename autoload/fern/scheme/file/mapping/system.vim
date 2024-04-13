@@ -156,30 +156,50 @@ function! s:map_open_pinta(helper) abort
   return
 endfunction
 
+function! s:is_extractable_file(filename) abort
+    let l:extractable_extensions = ['tar.gz', 'tar.bz2', 'tar.xz', 'tar', 'tgz', 'tbz2', 'zip', 'rar', 'bz2', 'gz', 'xz', 'Z']
+    let l:file_extension = tolower(fnamemodify(a:filename, ':e'))
+    if index(l:extractable_extensions, l:file_extension) != -1
+        return 1
+    else
+        return 0
+    endif
+endfunction
+
 function! s:map_extract_here(helper) abort
   let cwd = getcwd()
   let cfd = a:helper.sync.get_root_node()._path
   let d1cmd = "cd ". cfd
   exe d1cmd
   let path = a:helper.sync.get_cursor_node()._path
-  let cmd = 'silent !exth "' . path . '" && fg'
-  exe cmd
-  exe 'redraw!'
-  let d2cmd = "cd ". cwd
-  exe d2cmd
-  let root = a:helper.sync.get_root_node()
+  let is_extractable = s:is_extractable_file(path)
+  if is_extractable
+    let cmd = 'silent !exth "' . path . '" && fg'
+    exe cmd
+    exe 'redraw!'
+    let d2cmd = "cd ". cwd
+    exe d2cmd
+    let root = a:helper.sync.get_root_node()
+  else
+    echo "'" . path "' is not extractable."
+  endif
   return a:helper.async.reload_node(root.__key)
         \.then({ -> a:helper.async.redraw() })
 endfunction
 
 function! s:map_extract_directory(helper) abort
   let path = a:helper.sync.get_cursor_node()._path
-  let cmd = 'silent !extd "' . path . '" && fg'
-  exe cmd
-  exe 'redraw!'
-  let root = a:helper.sync.get_root_node()
-  return a:helper.async.reload_node(root.__key)
-        \.then({ -> a:helper.async.redraw() })
+  let is_extractable = s:is_extractable_file(path)
+  if is_extractable
+    let cmd = 'silent !extd "' . path . '" && fg'
+    exe cmd
+    exe 'redraw!'
+    let root = a:helper.sync.get_root_node()
+    return a:helper.async.reload_node(root.__key)
+          \.then({ -> a:helper.async.redraw() })
+  else
+    echo "'" . path "' is not extractable."
+  endif
 endfunction
 
 function! s:map_copy_from_clipboard(helper) abort
@@ -224,6 +244,13 @@ endfunction
 
 function! s:map_selection_to_clipboard(helper) abort
   let nodes = a:helper.sync.get_selected_nodes()
+  if len(nodes) == 1
+    let root_path = a:helper.sync.get_root_node()._path
+    let cursor_path = a:helper.sync.get_cursor_node()._path
+    if root_path == cursor_path
+      return
+    endif
+  endif
   let paths = map(copy(nodes), { _, v -> substitute(v._path, " ", "", "g") })
   let length = len(paths)
   let args = join(paths, " ")
@@ -265,6 +292,13 @@ endfunction
 
 function! s:map_trash_nodes(helper) abort
   let nodes = a:helper.sync.get_selected_nodes()
+  if len(nodes) == 1
+    let root_path = a:helper.sync.get_root_node()._path
+    let cursor_path = a:helper.sync.get_cursor_node()._path
+    if root_path == cursor_path
+      return
+    endif
+  endif
   let paths = map(copy(nodes), { _, v -> "'" . v._path . "'"})
   let args = join(paths, " ")
   let root_path = a:helper.sync.get_root_node()._path
@@ -274,6 +308,13 @@ endfunction
 
 function! s:map_toggle_executable(helper) abort
   let nodes = a:helper.sync.get_selected_nodes()
+  if len(nodes) == 1
+    let root_path = a:helper.sync.get_root_node()._path
+    let cursor_path = a:helper.sync.get_cursor_node()._path
+    if root_path == cursor_path
+      return
+    endif
+  endif
   let length = len(nodes)
   let paths = map(copy(nodes), { _, v -> substitute(v._path, " ", "", "g") })
   let args = join(paths, " ")

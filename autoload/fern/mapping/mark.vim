@@ -47,6 +47,11 @@ function! s:call(name, ...) abort
 endfunction
 
 function! s:map_mark_set(helper) abort
+  let root_path = a:helper.sync.get_root_node()._path
+  let cursor_path = a:helper.sync.get_cursor_node()._path
+  if root_path == cursor_path
+    return
+  endif
   let node = a:helper.sync.get_cursor_node()
   if node is# v:null
     return s:Promise.reject('no node found on a cursor line')
