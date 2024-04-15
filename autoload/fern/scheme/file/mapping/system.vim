@@ -169,11 +169,11 @@ endfunction
 function! s:map_extract_here(helper) abort
   let cwd = getcwd()
   let cfd = a:helper.sync.get_root_node()._path
-  let d1cmd = "cd ". cfd
-  exe d1cmd
   let path = a:helper.sync.get_cursor_node()._path
   let is_extractable = s:is_extractable_file(path)
   if is_extractable
+    let d1cmd = "cd ". cfd
+    exe d1cmd
     let cmd = 'silent !exth "' . path . '" && fg'
     exe cmd
     exe 'redraw!'
@@ -188,7 +188,11 @@ function! s:map_extract_here(helper) abort
 endfunction
 
 function! s:map_extract_directory(helper) abort
+  let cfd = a:helper.sync.get_root_node()._path
   let path = a:helper.sync.get_cursor_node()._path
+  if cdf == path
+    return
+  endif
   let is_extractable = s:is_extractable_file(path)
   if is_extractable
     let cmd = 'silent !extd "' . path . '" && fg'
