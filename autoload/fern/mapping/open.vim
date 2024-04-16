@@ -4,7 +4,7 @@ function! fern#mapping#open#init(disable_default_mappings) abort
   nnoremap <buffer><silent> <Plug>(fern-action-open:select)   :<C-u>call <SID>call('open', 'select')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-open:split)    :<C-u>call <SID>call('open', 'split')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-open:vsplit)   :<C-u>call <SID>call('open', 'vsplit')<CR>
-  nnoremap <buffer><silent> <Plug>(fern-action-open:tabedit)  :<C-u>call <SID>call('open', 'tabedit')<CR>
+  nnoremap <buffer><silent> <Plug>(fern-action-open:tabedit)  :<C-u>call <SID>call('tab_open')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-open:above)    :<C-u>call <SID>call('open', 'leftabove split')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-open:left)     :<C-u>call <SID>call('open', 'leftabove vsplit')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-open:below)    :<C-u>call <SID>call('open', 'rightbelow split')<CR>
@@ -93,4 +93,17 @@ function! s:map_open(helper, opener) abort
   catch
     return s:Promise.reject(v:exception)
   endtry
+endfunction
+
+function! s:map_tab_open(helper) abort
+  let nodes = a:helper.sync.get_selected_nodes()
+  let paths = map(copy(nodes), { _, v -> v._path})
+  let winid = win_getid()
+  for path in reverse(paths)
+    noautocmd call win_gotoid(winid)
+    execute "tabedit " . path
+  endfor
+  return s:Promise.resolve()
+        \.then({ -> a:helper.async.update_marks([]) })
+        \.then({ -> a:helper.async.remark() })
 endfunction
