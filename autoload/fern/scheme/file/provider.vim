@@ -177,12 +177,4 @@ runtime autoload/fern/scheme/file/util.vim
 
 " NOTE:
 " Performance 'find' > 'ls' >> 'reddir' > 'glob'
-call s:Config.config(expand('<sfile>:p'), {
-      \ 'impl': exists('*fern#scheme#file#util#list_entries_find')
-      \   ? 'find'
-      \   : exists('*fern#scheme#file#util#list_entries_ls')
-      \     ? 'ls'
-      \     : exists('*fern#scheme#file#util#list_entries_readdir')
-      \     ? 'readdir'
-      \     : 'glob',
-      \})
+call s:Config.config(expand('<sfile>:p'), { 'impl': 'find' })
