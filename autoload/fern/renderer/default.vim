@@ -151,7 +151,7 @@ endfunction
 
 function! s:get_ending(name, filetype) abort
   let fileparts = split(a:name, "\\V.")
-  let hasEnding = (a:filetype == "f" || a:filetype == "x") && len(fileparts) > 1
+  let hasEnding = (a:filetype == "f" || a:filetype == "x" || a:filetype == "l") && len(fileparts) > 1
   if hasEnding
     let ending = fileparts[len(fileparts)-1]
     if len(ending) < 9
