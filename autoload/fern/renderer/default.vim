@@ -43,7 +43,9 @@ function! s:syntax() abort
   syntax match FernRoot /^.*$/
   syntax match FernExecutable /^.*.*$/ contains=ExecutableChar
   syntax match FernBranch /^.*[].*$/ contains=FernBranchLink,FernWallChar
-  syntax match FernLink /^.*/ contains=FernWallChar
+  syntax match FernLink /^.* .*$/ contains=FernLinkPointedText,FernWallChar
+  syntax match FernLinkPointedText /  .* / contains=FernWallChar,FernLinkFileSize
+  syntax match FernLinkFileSize / [^ ]* B/ contained
   syntax match FernLinkToBranch /^.*[].* .*$/ contains=FernLinkToBranchPointedText,FernWallChar
   syntax match FernLinkToBranchPointedText /  .* / contains=FernWallChar
 
