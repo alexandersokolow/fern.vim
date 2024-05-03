@@ -170,6 +170,9 @@ function! s:map_extract_here(helper) abort
   let cwd = getcwd()
   let cfd = a:helper.sync.get_root_node()._path
   let path = a:helper.sync.get_cursor_node()._path
+  if cfd == path
+    return
+  endif
   let is_extractable = s:is_extractable_file(path)
   if is_extractable
     let d1cmd = "cd ". cfd
@@ -190,7 +193,7 @@ endfunction
 function! s:map_extract_directory(helper) abort
   let cfd = a:helper.sync.get_root_node()._path
   let path = a:helper.sync.get_cursor_node()._path
-  if cdf == path
+  if cfd == path
     return
   endif
   let is_extractable = s:is_extractable_file(path)
