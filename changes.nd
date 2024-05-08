@@ -4,9 +4,10 @@ stuff
 + fern/scheme/file/mapping/yank.vim (yanking to systems clipboard)
 + fern/scheme/file/mapping.vim (compression)
 + fern/renderer/default (changed syntax fun, added suffix/prefix/size fun, changed render_node fun)
-+ fern/scheme/file/provider (added get_the_... funs, changed node fun)
++ fern/scheme/file/provider (added get_the_... funs, changed node fun, hide hidden python files)
 + fern/scheme/file/util (changed find command to fnodes command)
 + fern/helper/async.vim (added update_nodes_plus, update_expanded_sizes, remove_removed_expanded_nodes funs and put them into update_nodes)
+
 
 mappings
 + fern/scheme/file/mapping.vim (changed mapping m to r, removed D mapping, changed mapping from N to F)

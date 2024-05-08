@@ -111,7 +111,7 @@ function! s:node(path) abort
   return {
         \ 'name': name,
         \ 'status': status,
-        \ 'hidden': name[:0] ==# '.',
+        \ 'hidden': name[:0] ==# '.' || (name[:1] ==# '__'),
         \ 'bufname': bufname,
         \ '_path': mypath,
         \ '_size': mysize,
