@@ -29,7 +29,7 @@ function! s:map_yank_cursor_path_to_cb(helper) abort
     return
   endif
   let value = fnamemodify(node._path, ':.')
-  echo "yanked " . value
+  echo value
   let cmd = 'echo "' . value . '" | xclip -selection clipboard'
   call system(cmd)
 endfunction
@@ -41,7 +41,7 @@ function! s:map_yank_root_path_to_cb(helper) abort
     return
   endif
   let value = fnamemodify(node._path, ':.')
-  echo "yanked " . value
+  echo value
   let cmd = 'echo "' . value . '" | xclip -selection clipboard'
   call system(cmd)
 endfunction
@@ -49,7 +49,7 @@ endfunction
 function! s:map_yank_cursor_abspath_to_cb(helper) abort
   let node = a:helper.sync.get_cursor_node()
   let value = node._path
-  echo "yanked " . value
+  echo value
   let cmd = 'echo "' . value . '" | xclip -selection clipboard'
   call system(cmd)
 endfunction
@@ -57,7 +57,7 @@ endfunction
 function! s:map_yank_root_abspath_to_cb(helper) abort
   let node = a:helper.sync.get_root_node()
   let value = node._path
-  echo "yanked " . value
+  echo value
   let cmd = 'echo "' . value . '" | xclip -selection clipboard'
   call system(cmd)
 endfunction
