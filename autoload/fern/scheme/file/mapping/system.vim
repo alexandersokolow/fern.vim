@@ -438,25 +438,25 @@ endfunction
 function! s:map_fzf_root(helper) abort
   let path = a:helper.sync.get_root_node()._path
   let sink_cmd = 'FzfCursorAfter ' . path
-  call fzf#run({'source': '~/dot/scripts/find/cached-find.sh ' . path, 'sink': sink_cmd, 'window': {'width': 0.8, 'height': 0.8}})
+  call fzf#run({'source': '~/dot/scripts/system/find/cached-find.sh ' . path, 'sink': sink_cmd, 'window': {'width': 0.8, 'height': 0.8}})
 endfunction
 
 function! s:map_fzf_cursor(helper) abort
   let path = a:helper.sync.get_cursor_node()._path
   let sink_cmd = 'FzfCursorAfter ' . path
-  call fzf#run({'source': '~/dot/scripts/find/cached-find.sh ' . path, 'sink': sink_cmd, 'window': {'width': 0.8, 'height': 0.8}})
+  call fzf#run({'source': '~/dot/scripts/system/find/cached-find.sh ' . path, 'sink': sink_cmd, 'window': {'width': 0.8, 'height': 0.8}})
 endfunction
 
 function! s:map_fzf_dir_root(helper) abort
   let path = a:helper.sync.get_root_node()._path
   let sink_cmd = 'FzfCursorAfter ' . path
-  call fzf#run({'source': '~/dot/scripts/find/cached-find-dir.sh ' . path, 'sink': sink_cmd, 'window': {'width': 0.8, 'height': 0.8}})
+  call fzf#run({'source': '~/dot/scripts/system/find/cached-find-dir.sh ' . path, 'sink': sink_cmd, 'window': {'width': 0.8, 'height': 0.8}})
 endfunction
 
 function! s:map_fzf_dir_cursor(helper) abort
   let path = a:helper.sync.get_cursor_node()._path
   let sink_cmd = 'FzfCursorAfter ' . path
-  call fzf#run({'source': '~/dot/scripts/find/cached-find-dir.sh ' . path, 'sink': sink_cmd, 'window': {'width': 0.8, 'height': 0.8}})
+  call fzf#run({'source': '~/dot/scripts/system/find/cached-find-dir.sh ' . path, 'sink': sink_cmd, 'window': {'width': 0.8, 'height': 0.8}})
 endfunction
 
 function! s:fzf_cursor_after(cursor, selection)
