@@ -24,10 +24,6 @@ endfunction
 
 function! s:map_yank_cursor_path_to_cb(helper) abort
   let node = a:helper.sync.get_cursor_node()
-  if node._path ==# getcwd()
-    echo "No relative path available for the CWD"
-    return
-  endif
   let value = fnamemodify(node._path, ':.')
   echo value
   let cmd = 'echo "' . value . '" | xclip -selection clipboard'
@@ -36,10 +32,6 @@ endfunction
 
 function! s:map_yank_root_path_to_cb(helper) abort
   let node = a:helper.sync.get_root_node()
-  if node._path ==# getcwd()
-    echo "No relative path available for the CWD"
-    return
-  endif
   let value = fnamemodify(node._path, ':.')
   echo value
   let cmd = 'echo "' . value . '" | xclip -selection clipboard'
