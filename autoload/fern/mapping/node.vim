@@ -8,6 +8,7 @@ function! fern#mapping#node#init(disable_default_mappings) abort
   nnoremap <buffer><silent> <Plug>(fern-action-expand:stay)   :<C-u>call <SID>call('expand_stay')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-expand:in)     :<C-u>call <SID>call('expand_in')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-collapse)      :<C-u>call <SID>call('collapse')<CR>
+  nnoremap <buffer><silent> <Plug>(fern-action-expand-or-collapse) :<C-u>call <SID>call('expand_or_collapse')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-reveal)        :<C-u>call <SID>call('reveal')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-reveal=)       :<C-u>call <SID>call_without_guard('reveal')<CR>
   nnoremap <buffer><silent> <Plug>(fern-action-focus:parent)  :<C-u>call <SID>call('focus_parent')<CR>
@@ -24,6 +25,8 @@ function! fern#mapping#node#init(disable_default_mappings) abort
     " nmap <buffer><nowait> <C-h> <Plug>(fern-action-leave)
     nmap <buffer><nowait> l <Plug>(fern-action-expand)
     nmap <buffer><nowait> h <Plug>(fern-action-collapse)
+    " <LeftRelease> fires after <LeftMouse> positioned the cursor on the clicked line
+    nmap <buffer><nowait> <LeftRelease> <Plug>(fern-action-expand-or-collapse)
     " nmap <buffer><nowait> i <Plug>(fern-action-reveal)
     nmap <buffer><nowait> <Return> <C-m>
     " nmap <buffer><nowait> <Backspace> <C-h>
@@ -106,6 +109,30 @@ function! s:map_collapse(helper) abort
   endif
   let previous = a:helper.sync.get_cursor_node()
   return a:helper.async.collapse_node(node.__key)
+        \.then({ -> a:helper.async.redraw() })
+        \.then({ -> a:helper.sync.focus_node(
+        \   node.__key,
+        \   { 'previous': previous },
+        \ )
+        \})
+endfunction
+
+function! s:map_expand_or_collapse(helper) abort
+  let node = a:helper.sync.get_cursor_node()
+  if node is# v:null
+    return s:Promise.reject('no node found on a cursor line')
+  endif
+  " leaf nodes (files) have nothing to toggle
+  if node.status is# a:helper.STATUS_NONE
+    return s:Promise.resolve()
+  endif
+  let previous = node
+  if node.status is# a:helper.STATUS_EXPANDED
+    let p = a:helper.async.collapse_node(node.__key)
+  else
+    let p = a:helper.async.expand_node(node.__key)
+  endif
+  return p
         \.then({ -> a:helper.async.redraw() })
         \.then({ -> a:helper.sync.focus_node(
         \   node.__key,
